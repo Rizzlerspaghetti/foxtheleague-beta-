@@ -3,116 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Managed App Store</title>
+    <title>Enterprise App Directory</title>
     <style>
         :root {
-            --bg: #0b0e14;
-            --card-bg: #161b22;
-            --text: #ffffff;
-            --text-dim: #8b949e;
-            --ready: #238636;
-            --revoked: #da3633;
-            --accent: #2f81f7;
+            --bg: #010409;
+            --card: #161b22;
             --border: #30363d;
+            --accent: #2f81f7;
+            --success: #238636;
+            --error: #da3633;
+            --text: #f0f6fc;
+            --dim: #8b949e;
         }
 
-        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .wrapper { width: 100%; max-width: 500px; }
-        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container { width: 100%; max-width: 480px; }
+
+        /* Header & Search */
+        header h1 { font-size: 28px; margin-bottom: 8px; font-weight: 700; }
+        .search-box {
+            width: 100%;
+            padding: 14px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            margin: 20px 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab.active { background: var(--accent); border-color: var(--accent); color: white; }
+
         /* App Cards */
-        .app-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .app-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .details b { display: block; font-size: 15px; }
-        .badge { font-size: 9px; padding: 2px 5px; border-radius: 4px; text-transform: uppercase; font-weight: bold; margin-bottom: 3px; display: inline-block; }
-        .status-ready { background: var(--ready); }
-        .status-revoked { background: var(--revoked); }
-        .btn-get { background: #21262d; color: var(--accent); text-decoration: none; padding: 6px 18px; border-radius: 15px; font-weight: bold; font-size: 13px; border: 1px solid var(--border); }
-
-        /* Admin Panel - Hidden by default */
-        #adminPanel { 
-            display: none; 
-            background: #1c2128; 
-            padding: 20px; 
-            border-radius: 12px; 
-            border: 1px solid var(--accent); 
-            margin-bottom: 20px; 
+        .app-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            transition: transform 0.2s;
         }
-        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid var(--border); background: var(--bg); color: white; box-sizing: border-box; }
-        .admin-btn { background: var(--accent); color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        
-        .secret-trigger { color: #0b0e14; cursor: default; user-select: none; font-size: 10px; }
+        .app-card:active { transform: scale(0.97); }
+
+        .app-meta { display: flex; align-items: center; gap: 14px; }
+        .app-icon {
+            width: 54px;
+            height: 54px;
+            background: linear-gradient(145deg, #1f242c, #0d1117);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 22px;
+            border: 1px solid var(--border);
+        }
+
+        .info b { display: block; font-size: 16px; margin-bottom: 2px; }
+        .info span { font-size: 12px; color: var(--dim); }
+
+        .status {
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: inline-block;
+        }
+        .status-signed { background: var(--success); color: white; }
+        .status-revoked { background: var(--error); color: white; }
+
+        .get-btn {
+            background: #21262d;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 8px 22px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid var(--border);
+        }
+
+        /* Admin Section */
+        #adminArea {
+            display: none;
+            background: #0d1117;
+            border: 1px dashed var(--accent);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .admin-input { width: 100%; padding: 8px; margin: 5px 0; background: #000; border: 1px solid var(--border); color: white; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
+<div class="container">
     <header>
-        <h1 onclick="checkAdmin()">Signed Apps</h1>
-        <p class="subtitle">Click the title 5 times to enter Admin Mode.</p>
+        <h1 id="mainTitle">Apps</h1>
+        <div id="adminArea">
+            <input type="text" id="aName" placeholder="App Name" class="admin-input">
+            <input type="text" id="aDev" placeholder="Developer" class="admin-input">
+            <input type="text" id="aLink" placeholder="itms-services://..." class="admin-input">
+            <select id="aStatus" class="admin-input">
+                <option value="signed">Signed</option>
+                <option value="revoked">Revoked</option>
+            </select>
+            <button onclick="genApp()" style="width:100%; padding:10px; background:var(--accent); border:none; border-radius:5px; color:white; font-weight:bold;">Generate JSON</button>
+            <pre id="jsonOutput" style="font-size:10px; color:var(--dim); white-space: pre-wrap;"></pre>
+        </div>
     </header>
 
-    <div id="adminPanel">
-        <h3>Add New App</h3>
-        <input type="text" id="newName" placeholder="App Name">
-        <input type="text" id="newDev" placeholder="Developer">
-        <input type="text" id="newLink" placeholder="Redirect URL (https://...)">
-        <select id="newStatus">
-            <option value="ready">Ready</option>
-            <option value="revoked">Revoked</option>
-        </select>
-        <button class="admin-btn" onclick="generateJSON()">Generate App Data</button>
-        <p style="font-size: 10px; color: var(--text-dim);">Copy the code below and paste it into the 'apps' array in your file.</p>
-        <code id="output" style="display:block; background: #000; padding: 10px; font-size: 10px; word-break: break-all;"></code>
+    <input type="text" class="search-box" id="search" placeholder="Search apps..." oninput="updateUI()">
+
+    <div class="tabs">
+        <div class="tab active" data-filter="all" onclick="setFilter(this)">All</div>
+        <div class="tab" data-filter="signed" onclick="setFilter(this)">Signed</div>
+        <div class="tab" data-filter="revoked" onclick="setFilter(this)">Revoked</div>
     </div>
 
-    <div class="app-list" id="appContainer"></div>
+    <div id="appList"></div>
 </div>
 
 <script>
-    // --- APP DATA SECTION ---
-    // TO ADD APPS: Paste the generated code inside these brackets [ ]
-    const apps = [
-        { name: "Esign", dev: "Apple", status: "ready", link: "https://google.com" },
-        { name: "TrollStore", dev: "Alfie", status: "revoked", link: "#" }
+    // --- DATABASE ---
+    // Edit this array to add/remove apps
+    const appData = [
+        { name: "Esign", dev: "Sunshine Insurance", status: "signed", url: "https://example.com" },
+        { name: "GBox", dev: "Enterprise Ltd", status: "signed", url: "https://example.com" },
+        { name: "TrollStore", dev: "Alfie CG", status: "revoked", url: "#" }
     ];
 
-    // --- LOGIC ---
-    let clickCount = 0;
-    function checkAdmin() {
-        clickCount++;
-        if (clickCount === 5) {
-            const code = prompt("Enter Secret Admin Key:");
-            if (code === "1234") { // CHANGE THIS KEY
-                document.getElementById('adminPanel').style.display = "block";
-            }
+    let currentFilter = 'all';
+
+    // --- ADMIN LOGIC ---
+    let clicks = 0;
+    document.getElementById('mainTitle').onclick = () => {
+        clicks++;
+        if(clicks === 5) {
+            let pw = prompt("Enter Admin Key:");
+            if(pw === "admin123") document.getElementById('adminArea').style.display = 'block';
         }
-    }
+    };
 
-    function generateJSON() {
-        const app = {
-            name: document.getElementById('newName').value,
-            dev: document.getElementById('newDev').value,
-            status: document.getElementById('newStatus').value,
-            link: document.getElementById('newLink').value
+    function genApp() {
+        const obj = {
+            name: document.getElementById('aName').value,
+            dev: document.getElementById('aDev').value,
+            status: document.getElementById('aStatus').value,
+            url: document.getElementById('aLink').value
         };
-        document.getElementById('output').innerText = JSON.stringify(app) + ",";
+        document.getElementById('jsonOutput').innerText = JSON.stringify(obj, null, 2) + ",";
     }
 
-    function render() {
-        const container = document.getElementById('appContainer');
-        container.innerHTML = apps.map(app => `
-            <div class="app-card">
-                <div class="details">
-                    <span class="badge status-${app.status}">${app.status}</span>
-                    <b>${app.name}</b>
-                    <span>${app.dev}</span>
+    // --- UI LOGIC ---
+    function setFilter(el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        currentFilter = el.getAttribute('data-filter');
+        updateUI();
+    }
+
+    function updateUI() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const list = document.getElementById('appList');
+        list.innerHTML = '';
+
+        appData.filter(app => {
+            const matchSearch = app.name.toLowerCase().includes(query);
+            const matchTab = currentFilter === 'all' || app.status === currentFilter;
+            return matchSearch && matchTab;
+        }).forEach(app => {
+            list.innerHTML += `
+                <div class="app-card">
+                    <div class="app-meta">
+                        <div class="app-icon">${app.name[0]}</div>
+                        <div class="info">
+                            <span class="status status-${app.status}">${app.status}</span>
+                            <b>${app.name}</b>
+                            <span>${app.dev}</span>
+                        </div>
+                    </div>
+                    <a href="${app.url}" class="get-btn">GET</a>
                 </div>
-                <a href="${app.link}" class="btn-get" target="_blank">GET</a>
-            </div>
-        `).join('');
+            `;
+        });
     }
 
-    render();
+    // Initial Render
+    updateUI();
 </script>
 </body>
 </html>
