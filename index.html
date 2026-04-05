@@ -6,7 +6,7 @@
     <title>App Directory</title>
     <style>
         :root {
-            --bg-color: #0d1117;
+            --bg-color: #0b0e14;
             --card-bg: #161b22;
             --border-color: #30363d;
             --text-primary: #f0f6fc;
@@ -19,191 +19,173 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-family: -apple-system, system-ui, sans-serif;
             margin: 0;
             display: flex;
             justify-content: center;
             padding: 20px;
         }
 
-        .container {
-            width: 100%;
-            max-width: 500px;
-        }
+        .container { width: 100%; max-width: 500px; }
 
-        header h1 {
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
+        header h1 { font-size: 26px; margin-bottom: 20px; cursor: pointer; }
 
-        /* Search Input */
+        /* Search & Tabs */
         .search-bar {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             color: white;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-sizing: border-box;
+            outline: none;
         }
 
-        /* Filter Tabs */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
         .tab {
             flex: 1;
-            padding: 8px;
+            padding: 10px;
             text-align: center;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
+            color: var(--text-secondary);
             transition: 0.2s;
         }
-
-        .tab.active {
-            background: var(--accent-blue);
-            border-color: var(--accent-blue);
-        }
+        .tab.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
 
         /* App Cards */
         .app-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 14px;
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
         }
 
-        .app-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .icon-placeholder {
-            width: 48px;
-            height: 48px;
+        .app-info { display: flex; align-items: center; gap: 15px; }
+        .icon {
+            width: 50px;
+            height: 50px;
             background: #21262d;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 20px;
+            border: 1px solid var(--border-color);
         }
 
-        .details b {
-            display: block;
-            font-size: 16px;
-        }
-
-        .details span {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
+        .details b { display: block; font-size: 16px; color: var(--text-primary); }
+        .details span { font-size: 12px; color: var(--text-secondary); }
 
         .badge {
-            font-size: 10px;
+            font-size: 9px;
             padding: 2px 6px;
             border-radius: 4px;
             text-transform: uppercase;
-            font-weight: bold;
-            margin-bottom: 4px;
+            font-weight: 800;
             display: inline-block;
+            margin-bottom: 4px;
         }
-
-        .ready { background: var(--status-ready); }
-        .revoked { background: var(--status-revoked); }
+        .ready { background: var(--status-ready); color: white; }
+        .revoked { background: var(--status-revoked); color: white; }
 
         .btn-get {
             background: #21262d;
             color: var(--accent-blue);
             text-decoration: none;
-            padding: 8px 16px;
+            padding: 8px 20px;
             border-radius: 20px;
             font-weight: bold;
             font-size: 14px;
             border: 1px solid var(--border-color);
+            transition: background 0.2s;
         }
+        .btn-get:hover { background: #30363d; }
 
-        /* Admin Secret Panel */
+        /* Admin Hidden Panel */
         #admin-panel {
             display: none;
+            background: #0d1117;
             padding: 15px;
             border: 1px dashed var(--accent-blue);
+            border-radius: 10px;
             margin-bottom: 20px;
-            border-radius: 8px;
         }
+        .admin-input { width: 100%; padding: 10px; margin-bottom: 10px; background: #000; border: 1px solid var(--border-color); color: white; border-radius: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1 id="title-trigger">Signed Apps</h1>
+        <h1 id="secret-trigger">Signed Apps</h1>
     </header>
 
     <div id="admin-panel">
-        <input type="text" id="add-name" placeholder="App Name" style="width:100%; margin-bottom:5px;">
-        <input type="text" id="add-link" placeholder="Link (https://...)" style="width:100%; margin-bottom:5px;">
-        <button onclick="generateData()">Get Data Snippet</button>
-        <p id="output-code" style="font-size:10px; color:gray; word-break:break-all;"></p>
+        <input type="text" id="add-name" class="admin-input" placeholder="App Name">
+        <input type="text" id="add-dev" class="admin-input" placeholder="Developer Name">
+        <input type="text" id="add-url" class="admin-input" placeholder="URL (e.g. itms-services://...)">
+        <select id="add-status" class="admin-input">
+            <option value="ready">Ready</option>
+            <option value="revoked">Revoked</option>
+        </select>
+        <button onclick="generateSnippet()" style="width:100%; padding:10px; background:var(--accent-blue); border:none; color:white; font-weight:bold; border-radius:5px;">Generate Data</button>
+        <code id="output" style="display:block; margin-top:10px; font-size:10px; color:var(--text-secondary); word-break:break-all;"></code>
     </div>
 
-    <input type="text" id="search" class="search-bar" placeholder="Search for apps..." oninput="render()">
+    <input type="text" id="search" class="search-bar" placeholder="Search apps..." oninput="render()">
 
     <div class="tabs">
-        <div class="tab active" data-type="all" onclick="setTab(this)">All</div>
-        <div class="tab" data-type="ready" onclick="setTab(this)">Ready</div>
-        <div class="tab" data-type="revoked" onclick="setTab(this)">Revoked</div>
+        <div class="tab active" data-filter="all" onclick="filter(this)">All</div>
+        <div class="tab" data-filter="ready" onclick="filter(this)">Ready</div>
+        <div class="tab" data-filter="revoked" onclick="filter(this)">Revoked</div>
     </div>
 
-    <div id="list"></div>
+    <div id="app-list"></div>
 </div>
 
 <script>
-    // 1. DATA: This is where your app information lives
+    // --- DATA ARRAY ---
+    // Update the 'url' property here to change where the GET button goes.
     const apps = [
-        { name: "Esign", dev: "Enterprise", status: "ready", url: "#" },
-        { name: "TrollStore", dev: "Alfie CG", status: "revoked", url: "#" },
-        { name: "Gbox", dev: "Developer", status: "ready", url: "#" }
+        { name: "Esign", dev: "China Telecom", status: "ready", url: "https://example.com/esign.plist" },
+        { name: "Gbox", dev: "Enterprise", status: "ready", url: "itms-services://?action=download-manifest&url=https://example.com/manifest.plist" },
+        { name: "TrollStore", dev: "Alfie CG", status: "revoked", url: "#" }
     ];
 
-    let activeFilter = 'all';
+    let currentTab = 'all';
 
-    // 2. LOGIC: Filter and Search
-    function setTab(el) {
+    function filter(el) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
-        activeFilter = el.getAttribute('data-type');
+        currentTab = el.getAttribute('data-filter');
         render();
     }
 
     function render() {
         const query = document.getElementById('search').value.toLowerCase();
-        const listDiv = document.getElementById('list');
-        listDiv.innerHTML = '';
+        const container = document.getElementById('app-list');
+        container.innerHTML = '';
 
-        const filtered = apps.filter(app => {
+        apps.filter(app => {
             const matchesSearch = app.name.toLowerCase().includes(query);
-            const matchesTab = activeFilter === 'all' || app.status === activeFilter;
+            const matchesTab = currentTab === 'all' || app.status === currentTab;
             return matchesSearch && matchesTab;
-        });
-
-        filtered.forEach(app => {
-            listDiv.innerHTML += `
+        }).forEach(app => {
+            container.innerHTML += `
                 <div class="app-card">
                     <div class="app-info">
-                        <div class="icon-placeholder">${app.name[0]}</div>
+                        <div class="icon">${app.name[0]}</div>
                         <div class="details">
                             <span class="badge ${app.status}">${app.status}</span>
                             <b>${app.name}</b>
@@ -216,25 +198,29 @@
         });
     }
 
-    // 3. ADMIN: Secret Access
-    let count = 0;
-    document.getElementById('title-trigger').onclick = () => {
-        count++;
-        if (count === 5) {
-            const pass = prompt("Password:");
-            if (pass === "123") { // Your secret password
+    // --- ADMIN LOGIC ---
+    let clickTracker = 0;
+    document.getElementById('secret-trigger').onclick = () => {
+        clickTracker++;
+        if (clickTracker === 5) {
+            const pin = prompt("Enter Admin PIN:");
+            if (pin === "0000") { // Default PIN
                 document.getElementById('admin-panel').style.display = 'block';
             }
         }
     };
 
-    function generateData() {
-        const n = document.getElementById('add-name').value;
-        const l = document.getElementById('add-link').value;
-        document.getElementById('output-code').innerText = `{ name: "${n}", dev: "User", status: "ready", url: "${l}" },`;
+    function generateSnippet() {
+        const name = document.getElementById('add-name').value;
+        const dev = document.getElementById('add-dev').value;
+        const url = document.getElementById('add-url').value;
+        const status = document.getElementById('add-status').value;
+        
+        const snippet = `{ name: "${name}", dev: "${dev}", status: "${status}", url: "${url}" },`;
+        document.getElementById('output').innerText = snippet;
     }
 
-    // Initial Load
+    // Load initial list
     render();
 </script>
 
