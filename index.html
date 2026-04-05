@@ -2,206 +2,229 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharloom Navigator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pharloom Dash</title>
     <style>
         :root {
-            --void-bg: #121213;
-            --deep-charcoal: #1e1e20;
+            --void-bg: #0a0a0b;
             --silk-red: #bb0000;
             --pale-white: #e0e0e0;
             --glow-blue: #58b1e8;
-            --border-ink: #333;
         }
 
         body {
             background-color: var(--void-bg);
             color: var(--pale-white);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: sans-serif;
             margin: 0;
-            padding: 0;
+            overflow: hidden;
+            touch-action: manipulation;
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: 100vh;
         }
 
-        /* Mobile-First Header */
-        header {
-            width: 100%;
-            padding: 50px 0 30px;
-            text-align: center;
-            background: radial-gradient(circle at top, #222, var(--void-bg));
-            border-bottom: 1px solid var(--border-ink);
-        }
-
-        .soul-meter {
-            width: 55px;
-            height: 55px;
-            border: 2px solid var(--pale-white);
-            border-radius: 50%;
-            margin: 0 auto 15px;
-            background: #000;
+        #game-container {
             position: relative;
-            box-shadow: 0 0 12px var(--glow-blue);
-            overflow: hidden;
+            width: 100vw;
+            height: 70vh;
+            border-bottom: 2px solid var(--silk-red);
+            background: linear-gradient(to bottom, #1a1a1d, #0a0a0b);
         }
 
-        .soul-fill {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 65%;
-            background: white;
-            filter: blur(4px);
-            animation: pulse 3s infinite ease-in-out;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.8; transform: translateY(2px); }
-            50% { opacity: 1; transform: translateY(-2px); }
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            letter-spacing: 4px;
-            color: var(--silk-red);
-            margin: 10px 0 5px;
-            text-transform: uppercase;
-        }
-
-        header p {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            letter-spacing: 1px;
-            margin: 0;
-        }
-
-        /* Content Sections */
-        main {
-            width: 90%;
-            max-width: 450px;
-            padding: 20px 0;
-        }
-
-        .card {
-            background: var(--deep-charcoal);
-            border: 1px solid var(--border-ink);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        }
-
-        h2 {
-            font-size: 1.2rem;
-            color: var(--pale-white);
-            margin-top: 0;
-            border-bottom: 1px solid var(--silk-red);
-            display: inline-block;
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-        }
-
-        .tracker-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 0.95rem;
-        }
-
-        input[type="checkbox"] {
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border: 1px solid var(--silk-red);
-            background: transparent;
-            margin-right: 12px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        input[type="checkbox"]:checked {
-            background: var(--silk-red);
-        }
-
-        input[type="checkbox"]:checked::after {
-            content: '✓';
-            color: white;
-            position: absolute;
-            left: 3px;
-            top: -2px;
-            font-size: 14px;
-        }
-
-        .btn {
+        canvas {
             display: block;
-            width: 100%;
-            padding: 12px;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            pointer-events: none;
+        }
+
+        .stats {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: var(--pale-white);
+            text-shadow: 0 0 5px var(--glow-blue);
+        }
+
+        .controls-hint {
+            padding: 20px;
+            text-align: center;
+        }
+
+        #restart-btn {
+            display: none;
+            margin-top: 20px;
+            padding: 15px 30px;
             background: transparent;
-            border: 1px solid var(--silk-red);
+            border: 2px solid var(--silk-red);
             color: var(--silk-red);
-            text-align: center;
-            text-decoration: none;
-            text-transform: uppercase;
             font-weight: bold;
-            letter-spacing: 1px;
-            border-radius: 4px;
-            transition: 0.2s;
-        }
-
-        .btn:active {
-            background: var(--silk-red);
-            color: white;
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 30px;
-            font-size: 0.75rem;
-            opacity: 0.5;
-            text-align: center;
+            text-transform: uppercase;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="soul-meter">
-            <div class="soul-fill"></div>
+    <div id="game-container">
+        <div class="ui-overlay">
+            <div class="stats">SILK: <span id="score">0</span></div>
         </div>
-        <h1>Pharloom</h1>
-        <p>A Silksong 2026 Companion</p>
-    </header>
+        <canvas id="gameCanvas"></canvas>
+    </div>
 
-    <main>
-        <section class="card">
-            <h2>Current Objective</h2>
-            <p>Prepare for the <b>Sea of Sorrow</b> expansion. New maritime charms and needle upgrades are expected in the upcoming patch.</p>
-            <a href="#" class="btn">View Patch Notes</a>
-        </section>
+    <div class="controls-hint">
+        <h2 id="status-text" style="color: var(--silk-red); margin: 5px 0;">TAP TO JUMP</h2>
+        <p style="opacity: 0.6;">Dodge the void. Collect the silk.</p>
+        <button id="restart-btn" onclick="resetGame()">Try Again</button>
+    </div>
 
-        <section class="card">
-            <h2>Completion Checklist</h2>
-            <div class="tracker-item">
-                <input type="checkbox" id="c1"> <label for="c1">Collect the Weaver's Silk</label>
-            </div>
-            <div class="tracker-item">
-                <input type="checkbox" id="c2"> <label for="c2">Defeat the Steel Assassin Sharpe</label>
-            </div>
-            <div class="tracker-item">
-                <input type="checkbox" id="c3"> <label for="c3">Unlock the Gilded Crest</label>
-            </div>
-        </section>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const statusText = document.getElementById('status-text');
+        const restartBtn = document.getElementById('restart-btn');
 
-        <section class="card">
-            <h2>Lore Fragment</h2>
-            <p style="font-style: italic; font-size: 0.9rem;">"In the depths of the Citadel, the songs of the old world still echo through the clockwork gears..."</p>
-        </section>
-    </main>
+        // Resize canvas
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight * 0.7;
 
-    <footer>
-        &copy; 2026 | Built by a Fellow Traveler
-    </footer>
+        let score = 0;
+        let gameActive = true;
+        
+        const player = {
+            x: 50,
+            y: canvas.height - 60,
+            width: 30,
+            height: 40,
+            color: '#e0e0e0',
+            dy: 0,
+            jumpForce: 12,
+            gravity: 0.6,
+            grounded: false
+        };
 
+        let obstacles = [];
+        let particles = [];
+        let frame = 0;
+
+        function spawnObstacle() {
+            const size = Math.random() * 30 + 20;
+            obstacles.push({
+                x: canvas.width + 100,
+                y: canvas.height - size,
+                width: size,
+                height: size,
+                color: '#1a1a1d',
+                speed: 5 + (score / 10)
+            });
+        }
+
+        function drawPlayer() {
+            // Draw a simple "Hornet" shape
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+            ctx.moveTo(player.x + 15, player.y); // Top of head
+            ctx.lineTo(player.x, player.y + 40); // Bottom left
+            ctx.lineTo(player.x + 30, player.y + 40); // Bottom right
+            ctx.fill();
+            
+            // Glowing eyes
+            ctx.fillStyle = '#000';
+            ctx.fillRect(player.x + 8, player.y + 12, 4, 4);
+            ctx.fillRect(player.x + 18, player.y + 12, 4, 4);
+        }
+
+        function update() {
+            if (!gameActive) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Player Physics
+            player.dy += player.gravity;
+            player.y += player.dy;
+
+            if (player.y + player.height > canvas.height) {
+                player.y = canvas.height - player.height;
+                player.dy = 0;
+                player.grounded = true;
+            } else {
+                player.grounded = false;
+            }
+
+            drawPlayer();
+
+            // Obstacles
+            if (frame % 100 === 0) spawnObstacle();
+            
+            obstacles.forEach((obs, index) => {
+                obs.x -= obs.speed;
+                
+                // Draw Obstacle (The Void)
+                ctx.fillStyle = '#4e9fd1';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#4e9fd1';
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                ctx.shadowBlur = 0;
+
+                // Collision
+                if (
+                    player.x < obs.x + obs.width &&
+                    player.x + player.width > obs.x &&
+                    player.y < obs.y + obs.height &&
+                    player.y + player.height > obs.y
+                ) {
+                    gameOver();
+                }
+
+                if (obs.x + obs.width < 0) {
+                    obstacles.splice(index, 1);
+                    score++;
+                    scoreEl.innerText = score;
+                }
+            });
+
+            frame++;
+            requestAnimationFrame(update);
+        }
+
+        function gameOver() {
+            gameActive = false;
+            statusText.innerText = "ASCENDED NO MORE";
+            restartBtn.style.display = "block";
+        }
+
+        function resetGame() {
+            score = 0;
+            scoreEl.innerText = "0";
+            obstacles = [];
+            player.y = canvas.height - 60;
+            gameActive = true;
+            statusText.innerText = "TAP TO JUMP";
+            restartBtn.style.display = "none";
+            update();
+        }
+
+        // Controls
+        const handleJump = (e) => {
+            if (e.type === 'touchstart') e.preventDefault();
+            if (player.grounded && gameActive) {
+                player.dy = -player.jumpForce;
+                player.grounded = false;
+            }
+        };
+
+        window.addEventListener('touchstart', handleJump);
+        window.addEventListener('mousedown', handleJump);
+        window.addEventListener('keydown', (e) => { if(e.code === 'Space') handleJump(e); });
+
+        update();
+    </script>
 </body>
 </html>
