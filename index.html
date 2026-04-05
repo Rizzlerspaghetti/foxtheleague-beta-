@@ -3,228 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pharloom Dash</title>
+    <title>Hollow Knight: GitHub Edition</title>
     <style>
-        :root {
-            --void-bg: #0a0a0b;
-            --silk-red: #bb0000;
-            --pale-white: #e0e0e0;
-            --glow-blue: #58b1e8;
-        }
-
-        body {
-            background-color: var(--void-bg);
-            color: var(--pale-white);
-            font-family: sans-serif;
-            margin: 0;
-            overflow: hidden;
-            touch-action: manipulation;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-        }
-
-        #game-container {
-            position: relative;
-            width: 100vw;
-            height: 70vh;
-            border-bottom: 2px solid var(--silk-red);
-            background: linear-gradient(to bottom, #1a1a1d, #0a0a0b);
-        }
-
-        canvas {
-            display: block;
-        }
-
-        .ui-overlay {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            pointer-events: none;
-        }
-
-        .stats {
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            color: var(--pale-white);
-            text-shadow: 0 0 5px var(--glow-blue);
-        }
-
-        .controls-hint {
-            padding: 20px;
-            text-align: center;
-        }
-
-        #restart-btn {
-            display: none;
-            margin-top: 20px;
-            padding: 15px 30px;
-            background: transparent;
-            border: 2px solid var(--silk-red);
-            color: var(--silk-red);
-            font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 5px;
-        }
+        :root { --bg: #0d0d0f; --silk: #bb0000; --pale: #e0e0e0; --void: #1a1a1d; }
+        body { margin: 0; background: var(--bg); overflow: hidden; font-family: sans-serif; user-select: none; }
+        #game-container { position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; }
+        canvas { display: block; background: #111; width: 100%; height: 60vh; border-bottom: 2px solid #333; }
+        
+        /* Mobile Controls */
+        .controls { flex: 1; display: grid; grid-template-columns: 1fr 1fr; padding: 10px; background: var(--bg); }
+        .d-pad, .actions { display: flex; justify-content: space-around; align-items: center; }
+        .btn { width: 70px; height: 70px; background: var(--void); border: 2px solid #444; border-radius: 50%; color: white; 
+                   display: flex; justify-content: center; align-items: center; font-weight: bold; touch-action: none; }
+        .btn:active { background: #333; border-color: var(--pale); }
+        .attack-btn { border-color: var(--silk) !important; color: var(--silk); }
+        .stats { position: absolute; top: 10px; left: 10px; color: var(--pale); letter-spacing: 2px; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <div class="ui-overlay">
-            <div class="stats">SILK: <span id="score">0</span></div>
+<div id="game-container">
+    <div class="stats">HP: <span id="hp">5</span> | SOUL: <span id="soul">0</span></div>
+    <canvas id="canvas"></canvas>
+    
+    <div class="controls">
+        <div class="d-pad">
+            <div class="btn" id="btn-left">←</div>
+            <div class="btn" id="btn-right">→</div>
         </div>
-        <canvas id="gameCanvas"></canvas>
+        <div class="actions">
+            <div class="btn attack-btn" id="btn-attack">NAIL</div>
+            <div class="btn" id="btn-jump">JUMP</div>
+        </div>
     </div>
+</div>
 
-    <div class="controls-hint">
-        <h2 id="status-text" style="color: var(--silk-red); margin: 5px 0;">TAP TO JUMP</h2>
-        <p style="opacity: 0.6;">Dodge the void. Collect the silk.</p>
-        <button id="restart-btn" onclick="resetGame()">Try Again</button>
-    </div>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const hpEl = document.getElementById('hp');
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreEl = document.getElementById('score');
-        const statusText = document.getElementById('status-text');
-        const restartBtn = document.getElementById('restart-btn');
+canvas.width = 800;
+canvas.height = 400;
 
-        // Resize canvas
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight * 0.7;
+// Game State
+let world = {
+    room: 0,
+    gravity: 0.5,
+    tiles: [],
+    enemies: []
+};
 
-        let score = 0;
-        let gameActive = true;
-        
-        const player = {
-            x: 50,
-            y: canvas.height - 60,
-            width: 30,
-            height: 40,
-            color: '#e0e0e0',
-            dy: 0,
-            jumpForce: 12,
-            gravity: 0.6,
-            grounded: false
-        };
+const player = {
+    x: 100, y: 200, w: 20, h: 30,
+    vx: 0, vy: 0, 
+    speed: 4, jump: -10,
+    hp: 5, soul: 0,
+    dir: 1, isGrounded: false,
+    attacking: 0
+};
 
-        let obstacles = [];
-        let particles = [];
-        let frame = 0;
+// Simple Room Maps (1 = Floor, 2 = Platform, 3 = Goal)
+const maps = [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+     0,0,0,0,2,2,2,0,0,0,0,2,2,2,0,0,0,0,0,0,
+     1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+     0,2,2,0,0,0,2,2,0,0,0,2,2,0,0,0,2,2,0,0,
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+     1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,1,1]
+];
 
-        function spawnObstacle() {
-            const size = Math.random() * 30 + 20;
-            obstacles.push({
-                x: canvas.width + 100,
-                y: canvas.height - size,
-                width: size,
-                height: size,
-                color: '#1a1a1d',
-                speed: 5 + (score / 10)
+function loadRoom(id) {
+    world.tiles = [];
+    world.enemies = [];
+    let layout = maps[id % maps.length];
+    for(let i=0; i<layout.length; i++) {
+        if(layout[i] > 0) {
+            world.tiles.push({
+                x: (i % 20) * 40,
+                y: Math.floor(i / 20) * 100 + 100,
+                w: 40, h: 40
             });
         }
+    }
+    // Add one Sentinel
+    world.enemies.push({x: 600, y: 270, w: 30, h: 30, vx: -1, hp: 2});
+}
 
-        function drawPlayer() {
-            // Draw a simple "Hornet" shape
-            ctx.fillStyle = player.color;
-            ctx.beginPath();
-            ctx.moveTo(player.x + 15, player.y); // Top of head
-            ctx.lineTo(player.x, player.y + 40); // Bottom left
-            ctx.lineTo(player.x + 30, player.y + 40); // Bottom right
-            ctx.fill();
-            
-            // Glowing eyes
-            ctx.fillStyle = '#000';
-            ctx.fillRect(player.x + 8, player.y + 12, 4, 4);
-            ctx.fillRect(player.x + 18, player.y + 12, 4, 4);
-        }
+// Controls Logic
+let keys = {};
+const setupBtn = (id, key) => {
+    const el = document.getElementById(id);
+    el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
+    el.addEventListener('touchend', () => { keys[key] = false; });
+};
 
-        function update() {
-            if (!gameActive) return;
+setupBtn('btn-left', 'left');
+setupBtn('btn-right', 'right');
+setupBtn('btn-jump', 'jump');
+setupBtn('btn-attack', 'attack');
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+function update() {
+    // Movement
+    if (keys.left) { player.vx = -player.speed; player.dir = -1; }
+    else if (keys.right) { player.vx = player.speed; player.dir = 1; }
+    else { player.vx *= 0.8; }
 
-            // Player Physics
-            player.dy += player.gravity;
-            player.y += player.dy;
+    if (keys.jump && player.isGrounded) {
+        player.vy = player.jump;
+        player.isGrounded = false;
+    }
 
-            if (player.y + player.height > canvas.height) {
-                player.y = canvas.height - player.height;
-                player.dy = 0;
-                player.grounded = true;
-            } else {
-                player.grounded = false;
+    if (keys.attack && player.attacking <= 0) {
+        player.attacking = 15; // Attack frames
+    }
+
+    player.vy += world.gravity;
+    player.x += player.vx;
+    player.y += player.vy;
+
+    // Collision
+    player.isGrounded = false;
+    world.tiles.forEach(t => {
+        if (player.x < t.x + t.w && player.x + player.w > t.x &&
+            player.y < t.y + t.h && player.y + player.h > t.y) {
+            if (player.vy > 0) {
+                player.y = t.y - player.h;
+                player.vy = 0;
+                player.isGrounded = true;
             }
-
-            drawPlayer();
-
-            // Obstacles
-            if (frame % 100 === 0) spawnObstacle();
-            
-            obstacles.forEach((obs, index) => {
-                obs.x -= obs.speed;
-                
-                // Draw Obstacle (The Void)
-                ctx.fillStyle = '#4e9fd1';
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = '#4e9fd1';
-                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-                ctx.shadowBlur = 0;
-
-                // Collision
-                if (
-                    player.x < obs.x + obs.width &&
-                    player.x + player.width > obs.x &&
-                    player.y < obs.y + obs.height &&
-                    player.y + player.height > obs.y
-                ) {
-                    gameOver();
-                }
-
-                if (obs.x + obs.width < 0) {
-                    obstacles.splice(index, 1);
-                    score++;
-                    scoreEl.innerText = score;
-                }
-            });
-
-            frame++;
-            requestAnimationFrame(update);
         }
+    });
 
-        function gameOver() {
-            gameActive = false;
-            statusText.innerText = "ASCENDED NO MORE";
-            restartBtn.style.display = "block";
-        }
+    // Enemy Logic
+    world.enemies.forEach((en, i) => {
+        en.x += en.vx;
+        if(en.x < 400 || en.x > 750) en.vx *= -1;
 
-        function resetGame() {
-            score = 0;
-            scoreEl.innerText = "0";
-            obstacles = [];
-            player.y = canvas.height - 60;
-            gameActive = true;
-            statusText.innerText = "TAP TO JUMP";
-            restartBtn.style.display = "none";
-            update();
-        }
-
-        // Controls
-        const handleJump = (e) => {
-            if (e.type === 'touchstart') e.preventDefault();
-            if (player.grounded && gameActive) {
-                player.dy = -player.jumpForce;
-                player.grounded = false;
+        // Player Attack Enemy
+        if(player.attacking > 0) {
+            let hitX = player.dir === 1 ? player.x + 30 : player.x - 30;
+            if(hitX > en.x && hitX < en.x + en.w && player.y > en.y - 20 && player.y < en.y + en.h) {
+                en.hp--;
+                if(en.hp <= 0) world.enemies.splice(i, 1);
             }
-        };
+        }
+    });
 
-        window.addEventListener('touchstart', handleJump);
-        window.addEventListener('mousedown', handleJump);
-        window.addEventListener('keydown', (e) => { if(e.code === 'Space') handleJump(e); });
+    // Room Transition
+    if (player.x > canvas.width) {
+        world.room++;
+        player.x = 10;
+        loadRoom(world.room);
+    }
 
-        update();
-    </script>
+    if(player.attacking > 0) player.attacking--;
+
+    draw();
+    requestAnimationFrame(update);
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Background/Atmosphere
+    ctx.fillStyle = "#15151a";
+    ctx.fillRect(0,0, canvas.width, canvas.height);
+
+    // Draw Tiles
+    ctx.fillStyle = "#333b42";
+    world.tiles.forEach(t => ctx.fillRect(t.x, t.y, t.w, t.h));
+
+    // Draw Player
+    ctx.fillStyle = player.attacking > 0 ? "white" : "#e0e0e0";
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+    
+    // Draw Attack Slash
+    if(player.attacking > 5) {
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.fillRect(player.dir === 1 ? player.x + 20 : player.x - 30, player.y + 5, 30, 10);
+    }
+
+    // Draw Enemies
+    ctx.fillStyle = "#bb0000";
+    world.enemies.forEach(en => ctx.fillRect(en.x, en.y, en.w, en.h));
+}
+
+loadRoom(0);
+update();
+</script>
 </body>
 </html>
