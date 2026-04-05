@@ -3,149 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Management</title>
-    <style>
-        :root {
-            --ios-blue: #007aff;
-            --glass-bg: rgba(28, 28, 30, 0.7);
-            --border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: -apple-system, system-ui, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container { width: 100%; max-width: 500px; }
-
-        header { margin-bottom: 24px; }
-        h1 { font-size: 34px; font-weight: 700; margin-bottom: 8px; }
-
-        .search-container {
-            margin-bottom: 20px;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: none;
-            background: #1c1c1e;
-            color: white;
-            font-size: 17px;
-            box-sizing: border-box;
-        }
-
-        .card-list { display: grid; gap: 12px; }
-
-        .app-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .app-info { display: flex; align-items: center; gap: 15px; }
-        
-        .app-icon {
-            width: 54px;
-            height: 54px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #3a3a3c, #1c1c1e);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .app-details h3 { margin: 0; font-size: 17px; font-weight: 600; }
-        .app-details p { margin: 2px 0 0; font-size: 13px; color: #8e8e93; }
-
-        .btn-install {
-            background: #2c2c2e;
-            color: var(--ios-blue);
-            border: none;
-            padding: 6px 18px;
-            border-radius: 15px;
-            font-weight: 700;
-            font-size: 13px;
-            text-transform: uppercase;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .btn-install:active { background: #3a3a3c; }
-    </style>
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="profile">
+                <h2>My Name</h2>
+                <p>Developer & Creator</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <button id="theme-toggle">Toggle Theme</button>
+        </aside>
 
-<div class="container">
-    <header>
-        <h1>Manage Files</h1>
-        <div class="search-container">
-            <input type="text" id="search" placeholder="Search resources...">
-        </div>
-    </header>
+        <main class="content">
+            <section id="about">
+                <h1>About Me</h1>
+                <p>This is a remake of the app layout. It is lightweight, fast, and hosts perfectly on GitHub.</p>
+            </section>
 
-    <div id="card-list" class="card-list">
-        </div>
-</div>
-
-<script>
-    // App Logic: Define your plist URLs and metadata here
-    const apps = [
-        {
-            name: "File Manager Pro",
-            vendor: "Enterprise Internal",
-            icon: "📁",
-            plist: "https://example.com/manifests/filemanager.plist"
-        },
-        {
-            name: "Data Sync Tool",
-            vendor: "Systems Dept",
-            icon: "🔄",
-            plist: "https://example.com/manifests/datasync.plist"
-        }
-    ];
-
-    const listContainer = document.getElementById('card-list');
-    const searchInput = document.getElementById('search');
-
-    function renderApps(filter = '') {
-        listContainer.innerHTML = '';
-        const filtered = apps.filter(a => a.name.toLowerCase().includes(filter.toLowerCase()));
-        
-        filtered.forEach(app => {
-            const installUrl = `itms-services://?action=download-manifest&url=${app.plist}`;
-            const card = document.createElement('div');
-            card.className = 'app-card';
-            card.innerHTML = `
-                <div class="app-info">
-                    <div class="app-icon">${app.icon}</div>
-                    <div class="app-details">
-                        <h3>${app.name}</h3>
-                        <p>${app.vendor}</p>
-                    </div>
+            <section id="projects">
+                <h1>Projects</h1>
+                <div class="card">
+                    <h3>Project One</h3>
+                    <p>Description of your awesome work goes here.</p>
                 </div>
-                <a href="${installUrl}" class="btn-install">Get</a>
-            `;
-            listContainer.appendChild(card);
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const btn = document.getElementById('theme-toggle');
+        btn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
         });
-    }
-
-    searchInput.addEventListener('input', (e) => renderApps(e.target.value));
-    renderApps();
-</script>
-
+    </script>
 </body>
 </html>
