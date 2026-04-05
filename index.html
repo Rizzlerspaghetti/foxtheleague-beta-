@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Enterprise Hub</title>
+    <title>foxtheleague | Signed Apps</title>
     <style>
         :root {
             --bg-black: #08090a;
@@ -12,168 +12,215 @@
             --ready-green: #22c55e;
             --revoked-red: #ef4444;
             --text-dim: #94a3b8;
+            --glass-bg: rgba(25, 28, 35, 0.8);
         }
 
         body {
             background-color: var(--bg-black);
             color: white;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, system-ui, sans-serif;
             margin: 0;
-            padding: 15px 15px 100px 15px;
+            padding: 15px 15px 120px 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
         }
 
         .container { width: 100%; max-width: 450px; }
 
         /* Header */
         .header {
-            background: rgba(25, 28, 35, 0.7);
+            background: var(--glass-bg);
             backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border-radius: 20px;
             padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 15px;
-        }
-
-        /* Search Bar */
-        .search-container {
-            width: 100%;
             margin-bottom: 20px;
         }
 
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .logo-box {
+            width: 32px; height: 32px; background: #fbbf24; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: black; font-weight: 900;
+        }
+
+        /* Filter Tabs */
+        .filters {
+            display: flex; gap: 10px; margin-bottom: 20px;
+            overflow-x: auto; padding-bottom: 5px;
+        }
+        .filter-btn {
+            background: #1a1d23; border: 1px solid transparent;
+            color: var(--text-dim); padding: 8px 18px; border-radius: 12px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+        }
+        .filter-btn.active {
+            background: rgba(37, 99, 235, 0.15); color: white; border-color: var(--accent-blue);
+        }
+
+        /* Search Input (Hidden by default, toggled by circle) */
+        #searchWrapper {
+            display: none; width: 100%; margin-bottom: 15px;
+        }
         #appSearch {
-            width: 100%;
-            padding: 12px 15px;
-            background: var(--card-gray);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            color: white;
-            box-sizing: border-box;
-            outline: none;
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #333;
+            background: var(--card-gray); color: white; outline: none;
         }
 
         /* App Cards */
         .app-card {
-            background: var(--card-gray);
-            border-radius: 22px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            position: relative;
-            border: 1px solid rgba(255,255,255,0.03);
+            background: var(--card-gray); border-radius: 24px; padding: 16px;
+            display: flex; align-items: center; margin-bottom: 12px;
+            position: relative; border: 1px solid rgba(255,255,255,0.03);
         }
-
-        .icon-container { position: relative; margin-right: 15px; }
+        .icon-wrap { position: relative; margin-right: 15px; }
         .app-icon {
-            width: 60px; height: 60px;
-            border-radius: 16px;
-            background: #1e222a;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px;
+            width: 60px; height: 60px; border-radius: 16px;
+            background: #1e222a; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; border: 1px solid #333;
+        }
+        .badge {
+            position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+            font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 5px;
+        }
+        .badge.ready { background: var(--ready-green); }
+        .badge.revoked { background: var(--revoked-red); }
+
+        .details { flex: 1; }
+        .name { font-size: 15px; font-weight: 600; margin: 0; }
+        .sub { font-size: 11px; color: var(--text-dim); margin: 3px 0 0; }
+
+        .get-btn {
+            background: var(--accent-blue); color: white; padding: 8px 20px;
+            border-radius: 20px; font-weight: 700; font-size: 13px; text-decoration: none;
         }
 
-        .status-badge {
-            position: absolute; top: -10px; left: 50%;
-            transform: translateX(-50%);
-            font-size: 9px; font-weight: 800;
-            padding: 2px 8px; border-radius: 5px;
-            text-transform: uppercase;
-        }
-        .status-badge.ready { background: var(--ready-green); }
-        .status-badge.revoked { background: var(--revoked-red); }
-
-        .app-details { flex: 1; }
-        .app-name { font-size: 16px; font-weight: 600; margin: 0; }
-        .app-provider { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
-
-        .get-button {
-            background: var(--accent-blue);
-            color: white; padding: 8px 20px;
-            border-radius: 20px; text-decoration: none;
-            font-weight: bold; font-size: 13px;
+        .divider {
+            text-align: center; color: var(--text-dim); font-size: 10px;
+            font-weight: 800; margin: 30px 0 20px; letter-spacing: 1px;
         }
 
-        /* Nav */
-        .bottom-nav {
-            position: fixed; bottom: 25px; left: 50%;
-            transform: translateX(-50%); width: 90%; max-width: 400px;
-            background: rgba(18, 20, 24, 0.85);
-            backdrop-filter: blur(20px); border-radius: 35px;
-            display: flex; justify-content: space-around; padding: 12px 10px;
-            border: 1px solid rgba(255,255,255,0.08);
+        /* Bottom Nav Wrapper */
+        .nav-wrapper {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 12px; width: 90%; max-width: 400px;
         }
-
-        .nav-item { text-decoration: none; color: var(--text-dim); font-size: 10px; text-align: center; }
-        .nav-item.active { color: white; }
+        .nav-pill {
+            flex: 1; background: rgba(18, 20, 24, 0.95); backdrop-filter: blur(20px);
+            border-radius: 40px; display: flex; padding: 6px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-link {
+            flex: 1; text-decoration: none; display: flex; flex-direction: column;
+            align-items: center; padding: 8px 0; color: var(--text-dim); font-size: 10px; font-weight: 700;
+        }
+        .nav-link.active { background: rgba(255,255,255,0.1); color: white; border-radius: 32px; }
+        
+        .search-circle {
+            width: 60px; height: 60px; background: rgba(18, 20, 24, 0.95);
+            backdrop-filter: blur(20px); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1);
+            color: white; font-size: 20px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header class="header">
-        <div style="display:flex; align-items:center;">
-            <div style="width:30px; height:30px; background:#fbbf24; border-radius:8px; display:flex; align-items:center; justify-content:center; color:black; font-weight:bold; margin-right:10px;">X</div>
-            <span style="font-weight:700;">Enterprise Hub</span>
+        <div class="brand">
+            <div class="logo-box">F</div>
+            <span style="font-weight:700;">foxtheleague</span>
+            <span style="font-size:10px; color:var(--text-dim); background:#1e222a; padding:2px 6px; border-radius:4px;">BETA</span>
         </div>
-        <span>🌙 🇺🇸</span>
+        <div>🌙 🇺🇸</div>
     </header>
 
-    <div class="search-container">
-        <input type="text" id="appSearch" placeholder="Search apps..." onkeyup="filterApps()">
+    <div id="searchWrapper">
+        <input type="text" id="appSearch" placeholder="Search for apps..." onkeyup="runLogic()">
+    </div>
+
+    <div class="filters">
+        <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" onclick="setFilter('esign', this)">Esign</button>
+        <button class="filter-btn" onclick="setFilter('ksign', this)">Ksign</button>
     </div>
 
     <div id="appList">
-        <div class="app-card">
-            <div class="icon-container">
-                <span class="status-badge ready">Ready</span>
+        <div class="app-card" data-type="esign">
+            <div class="icon-wrap">
+                <span class="badge ready">Ready</span>
                 <div class="app-icon">📦</div>
             </div>
-            <div class="app-details">
-                <p class="app-name">Esign - XL Axiata</p>
-                <p class="app-provider">XL AXIATA, PT TBK</p>
+            <div class="details">
+                <p class="name">Esign - XL Axiata</p>
+                <p class="sub">XL AXIATA, PT TBK</p>
             </div>
-            <a href="itms-services://?action=download-manifest&url=https://raw.githubusercontent.com/xyzarco/plist/refs/heads/main/esign/plist/xlaxiata.plist" class="get-button">GET</a>
+            <a href="itms-services://?action=download-manifest&url=https://raw.githubusercontent.com/xyzarco/plist/refs/heads/main/esign/plist/xlaxiata.plist" class="get-btn">GET</a>
         </div>
 
-        <div class="app-card">
-            <div class="icon-container">
-                <span class="status-badge revoked">Revoked</span>
+        <div class="divider">OLD SIGNED, MAY NOT WORK</div>
+
+        <div class="app-card" data-type="ksign">
+            <div class="icon-wrap">
+                <span class="badge revoked">Revoked</span>
                 <div class="app-icon">📁</div>
             </div>
-            <div class="app-details">
-                <p class="app-name">Ksign - Varco</p>
-                <p class="app-provider">National Oilwell Varco, Inc.</p>
+            <div class="details">
+                <p class="name">Ksign - Varco</p>
+                <p class="sub">National Oilwell Varco, Inc.</p>
             </div>
-            <a href="#" class="get-button" style="opacity:0.5;">GET</a>
+            <a href="#" class="get-btn" style="opacity:0.5;">GET</a>
         </div>
     </div>
 </div>
 
-<nav class="bottom-nav">
-    <a href="#" class="nav-item active"><div>🏠</div><span>SIGNED</span></a>
-    <a href="#" class="nav-item"><div>🔗</div><span>LINKS</span></a>
-    <a href="#" class="nav-item"><div>🛡️</div><span>CERTS</span></a>
-</nav>
+<div class="nav-wrapper">
+    <nav class="nav-pill">
+        <a href="#" class="nav-link active"><span>🏠</span><span>SIGNED</span></a>
+        <a href="#" class="nav-link"><span>🔗</span><span>LINKS</span></a>
+        <a href="#" class="nav-item nav-link"><span>🛡️</span><span>CERTS</span></a>
+    </nav>
+    <div class="search-circle" onclick="toggleSearch()">🔍</div>
+</div>
 
 <script>
-    function filterApps() {
-        let input = document.getElementById('appSearch').value.toLowerCase();
-        let cards = document.getElementsByClassName('app-card');
+    let currentFilter = 'all';
+
+    function toggleSearch() {
+        const sw = document.getElementById('searchWrapper');
+        sw.style.display = sw.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function setFilter(type, el) {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        el.classList.add('active');
+        currentFilter = type;
+        runLogic();
+    }
+
+    function runLogic() {
+        const query = document.getElementById('appSearch').value.toLowerCase();
+        const cards = document.querySelectorAll('.app-card');
         
-        for (let i = 0; i < cards.length; i++) {
-            let name = cards[i].querySelector('.app-name').innerText.toLowerCase();
-            if (name.includes(input)) {
-                cards[i].style.display = "";
+        cards.forEach(card => {
+            const name = card.querySelector('.name').innerText.toLowerCase();
+            const type = card.getAttribute('data-type');
+            
+            const matchesSearch = name.includes(query);
+            const matchesFilter = (currentFilter === 'all' || type === currentFilter);
+
+            if (matchesSearch && matchesFilter) {
+                card.style.display = "flex";
             } else {
-                cards[i].style.display = "none";
+                card.style.display = "none";
             }
-        }
+        });
     }
 </script>
 
