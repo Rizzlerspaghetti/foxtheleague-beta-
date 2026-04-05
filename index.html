@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>xyzarco Layout Remake</title>
+    <style>
+        :root {
+            --bg-black: #08090a;
+            --card-gray: #121418;
+            --accent-blue: #2563eb;
+            --ready-green: #22c55e;
+            --revoked-red: #ef4444;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 15px 15px 100px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container { width: 100%; max-width: 450px; }
+
+        /* Top Header Area */
+        .header {
+            background: rgba(25, 28, 35, 0.7);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .logo-circle {
+            width: 35px;
+            height: 35px;
+            background: #1e222a;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 10px;
+            border: 1px solid #333;
+        }
+
+        /* Filter Pills */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .filter-pill {
+            background: #1a1d23;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            white-space: nowrap;
+            color: var(--text-dim);
+            border: 1px solid transparent;
+        }
+
+        .filter-pill.active {
+            background: rgba(37, 99, 235, 0.1);
+            color: white;
+            border: 1px solid var(--accent-blue);
+        }
+
+        /* App Cards */
+        .app-card {
+            background: var(--card-gray);
+            border-radius: 22px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .icon-container {
+            position: relative;
+            margin-right: 15px;
+        }
+
+        .app-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #2a2f3a, #1a1d23);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .status-badge.ready { background: var(--ready-green); }
+        .status-badge.revoked { background: var(--revoked-red); }
+
+        .app-details { flex: 1; }
+        .app-name { font-size: 16px; font-weight: 600; margin: 0; }
+        .app-provider { font-size: 12px; color: var(--text-dim); margin: 4px 0 0; }
+
+        .get-button {
+            background: var(--accent-blue);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Section Divider */
+        .section-title {
+            color: var(--text-dim);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 25px 0 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+        }
+        .section-title::before, .section-title::after {
+            content: ""; flex: 1; height: 1px; background: #222; margin: 0 15px;
+        }
+
+        /* Bottom Nav (Floating) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: rgba(18, 20, 24, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 35px;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 10px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .nav-item.active { color: white; }
+        .nav-icon { font-size: 18px; margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="header">
+        <div style="display:flex; align-items:center;">
+            <div class="logo-circle">X</div>
+            <div>
+                <span style="font-weight:700;">xyzarco</span>
+                <span style="font-size:10px; color:var(--text-dim); margin-left:5px; background:#1e222a; padding:2px 6px; border-radius:4px;">BETA</span>
+            </div>
+        </div>
+        <div style="display:flex; gap:15px; font-size:18px;">
+            <span>🌙</span><span>🇺🇸</span>
+        </div>
+    </header>
+
+    <div class="filters">
+        <div class="filter-pill active">All</div>
+        <div class="filter-pill">Esign</div>
+        <div class="filter-pill">Ksign</div>
+        <div class="filter-pill">Other</div>
+    </div>
+
+    <div class="app-card">
+        <div class="icon-container">
+            <span class="status-badge ready">Ready</span>
+            <div class="app-icon">📦</div>
+        </div>
+        <div class="app-details">
+            <p class="app-name">Esign - XL Axiata</p>
+            <p class="app-provider">XL AXIATA, PT TBK</p>
+        </div>
+        <a href="#" class="get-button">GET</a>
+    </div>
+
+    <div class="section-title">Old Signed, May Not Work</div>
+
+    <div class="app-card">
+        <div class="icon-container">
+            <span class="status-badge revoked">Revoked</span>
+            <div class="app-icon">📁</div>
+        </div>
+        <div class="app-details">
+            <p class="app-name">Ksign - Varco</p>
+            <p class="app-provider">National Oilwell Varco, Inc.</p>
+        </div>
+        <a href="#" class="get-button" style="opacity:0.6;">GET</a>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="#" class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span>SIGNED</span>
+    </a>
+    <a href="#" class="nav-item">
+        <span class="nav-icon">🔗</span>
+        <span>LINKS</span>
+    </a>
+    <a href="#" class="nav-item">
+        <span class="nav-icon">🛡️</span>
+        <span>CERTS</span>
+    </a>
+    <a href="#" class="nav-item">
+        <span class="nav-icon">🔍</span>
+        <span>SEARCH</span>
+    </a>
+</nav>
+
+</body>
+</html>
