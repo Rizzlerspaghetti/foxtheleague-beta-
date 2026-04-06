@@ -1,259 +1,631 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RoclothesV2</title>
-    <style>
-        :root {
-            --mac-bg: rgba(255, 255, 255, 0.1);
-            --mac-border: rgba(255, 255, 255, 0.2);
-            --accent: #007aff; 
-            --text: #ffffff;
-            --glass: blur(25px);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>foxtheleague — Signed Apps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --card2: #1c2330;
+    --border: rgba(255,255,255,0.07);
+    --text: #e6edf3;
+    --sub: #8b949e;
+    --blue: #2d6df6;
+    --blue-hover: #4a82f8;
+    --ready: #238636;
+    --revoked: #da3633;
+    --radius: 18px;
+  }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+- { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-            background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover;
-            padding: 15px;
-            overflow: hidden;
-        }
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘DM Sans’, -apple-system, sans-serif;
+min-height: 100vh;
+max-width: 480px;
+margin: 0 auto;
+padding-bottom: 100px;
+}
 
-        /* Disclaimer Modal */
-        #disclaimer-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+/* HEADER */
+.header {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 18px 16px 14px;
+position: sticky;
+top: 0;
+background: rgba(13,17,23,0.92);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+z-index: 100;
+border-bottom: 1px solid var(–border);
+}
 
-        .alert-box {
-            width: 320px;
-            background: rgba(40, 40, 40, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 18px;
-            padding: 20px;
-            text-align: center;
-            color: white;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+.header-icon {
+width: 42px;
+height: 42px;
+background: #f5c542;
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 800;
+font-size: 20px;
+color: #000;
+flex-shrink: 0;
+}
 
-        .alert-box h2 { font-size: 17px; margin: 0 0 10px 0; font-weight: 600; }
-        .alert-box p { font-size: 13px; color: #ddd; line-height: 1.5; margin-bottom: 20px; }
-        
-        .alert-btn {
-            background: var(--accent);
-            border: none;
-            color: white;
-            padding: 10px 0;
-            width: 100%;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-        }
+.header-title {
+font-size: 20px;
+font-weight: 700;
+letter-spacing: -0.3px;
+}
 
-        /* Main Window */
-        .window {
-            width: 100%;
-            max-width: 900px;
-            height: 550px;
-            background: var(--mac-bg);
-            backdrop-filter: var(--glass);
-            -webkit-backdrop-filter: var(--glass);
-            border-radius: 12px;
-            border: 1px solid var(--mac-border);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-            display: flex;
-            overflow: hidden;
-            animation: fadeIn 0.5s ease;
-        }
+.header-badge {
+background: rgba(255,255,255,0.1);
+color: var(–sub);
+font-size: 10px;
+font-weight: 600;
+padding: 3px 7px;
+border-radius: 6px;
+letter-spacing: 0.5px;
+}
 
-        .sidebar {
-            width: 180px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 20px 15px;
-            border-right: 1px solid var(--mac-border);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
+.header-actions {
+margin-left: auto;
+display: flex;
+gap: 14px;
+align-items: center;
+}
 
-        .dots { display: flex; gap: 8px; margin-bottom: 25px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; }
-        .close { background: #ff5f56; } .min { background: #ffbd2e; } .max { background: #27c93f; }
+.header-actions button {
+background: none;
+border: none;
+color: var(–sub);
+cursor: pointer;
+font-size: 18px;
+padding: 4px;
+transition: color 0.2s;
+}
+.header-actions button:hover { color: var(–text); }
 
-        .nav-link {
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            color: rgba(255,255,255,0.6);
-            cursor: pointer;
-            margin-bottom: 4px;
-            transition: all 0.2s ease;
-        }
-        .nav-link.active { background: rgba(255,255,255,0.1); color: #fff; font-weight: 500; }
+/* TOOLBAR */
+.toolbar {
+display: flex;
+gap: 8px;
+padding: 10px 16px;
+align-items: center;
+}
 
-        .content { flex: 1; padding: 30px; display: flex; flex-direction: column; overflow: hidden; }
-        .page { display: none; height: 100%; flex-direction: column; animation: slideIn 0.3s ease; }
-        .page.active { display: flex; }
+.toolbar-btn {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 10px;
+color: var(–sub);
+padding: 7px 10px;
+cursor: pointer;
+font-size: 14px;
+transition: all 0.2s;
+display: flex;
+align-items: center;
+gap: 5px;
+}
+.toolbar-btn:hover { background: var(–card2); color: var(–text); }
+.toolbar-btn.active { color: var(–text); background: var(–card2); }
 
-        h1 { margin: 0; font-size: 24px; font-weight: 700; }
-        .subtitle { color: rgba(255,255,255,0.5); font-size: 12px; margin: 4px 0 20px 0; }
+/* SECTION LABEL */
+.section-label {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 6px 16px 10px;
+font-size: 11px;
+font-weight: 600;
+color: var(–sub);
+letter-spacing: 1.2px;
+text-transform: uppercase;
+}
+.section-label::before,
+.section-label::after {
+content: ‘’;
+flex: 1;
+height: 1px;
+background: var(–border);
+}
 
-        .card { background: rgba(255,255,255,0.05); border: 1px solid var(--mac-border); padding: 20px; border-radius: 12px; color: white; margin-bottom: 15px; }
-        .ver-tag { font-size: 10px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px; color: var(--accent); font-weight: bold; }
+/* APP LIST */
+.app-list {
+display: flex;
+flex-direction: column;
+gap: 10px;
+padding: 0 12px;
+}
 
-        .code-container { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--mac-border); margin-bottom: 15px; }
-        code { font-family: "SF Mono", monospace; font-size: 11px; color: #5ef1ff; word-break: break-all; }
+.app-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+display: flex;
+align-items: center;
+gap: 14px;
+padding: 14px;
+position: relative;
+transition: background 0.2s, transform 0.15s;
+cursor: pointer;
+animation: slideIn 0.4s ease both;
+}
+.app-card:hover { background: var(–card2); transform: scale(1.01); }
+.app-card:active { transform: scale(0.99); }
 
-        .action-btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .gh-btn { display: inline-block; text-decoration: none; background: #333; color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; margin-top: 10px; }
+@keyframes slideIn {
+from { opacity: 0; transform: translateY(12px); }
+to   { opacity: 1; transform: translateY(0); }
+}
 
-        @media (max-width: 650px) {
-            .window { flex-direction: column; height: 95vh; }
-            .sidebar { width: 100%; height: auto; flex-direction: row; border-right: none; border-bottom: 1px solid var(--mac-border); overflow-x: auto; }
-            .dots { display: none; }
-            .nav-link { margin-right: 8px; white-space: nowrap; }
-        }
+.app-card:nth-child(1) { animation-delay: 0.05s; }
+.app-card:nth-child(2) { animation-delay: 0.10s; }
+.app-card:nth-child(3) { animation-delay: 0.15s; }
+.app-card:nth-child(4) { animation-delay: 0.20s; }
+.app-card:nth-child(5) { animation-delay: 0.25s; }
+.app-card:nth-child(6) { animation-delay: 0.30s; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
-    </style>
+.app-icon-wrap {
+position: relative;
+flex-shrink: 0;
+}
+
+.app-icon {
+width: 62px;
+height: 62px;
+border-radius: 14px;
+object-fit: cover;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 28px;
+color: #fff;
+font-weight: 700;
+}
+
+/* colored icon backgrounds */
+.icon-esign  { background: linear-gradient(135deg, #4e9af1, #2563eb); }
+.icon-ksign  { background: linear-gradient(135deg, #60a5fa, #1d4ed8); }
+.icon-troll  { background: linear-gradient(135deg, #64748b, #334155); }
+
+.status-badge {
+position: absolute;
+top: -5px;
+left: -5px;
+font-size: 9px;
+font-weight: 700;
+padding: 3px 6px;
+border-radius: 6px;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+}
+.badge-ready   { background: var(–ready);   color: #fff; }
+.badge-revoked { background: var(–revoked); color: #fff; }
+
+.app-info { flex: 1; min-width: 0; }
+
+.app-name {
+font-size: 16px;
+font-weight: 600;
+color: var(–text);
+margin-bottom: 3px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.app-sub {
+font-size: 12px;
+color: var(–sub);
+font-weight: 500;
+letter-spacing: 0.2px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.get-btn {
+background: var(–blue);
+color: #fff;
+border: none;
+border-radius: 20px;
+padding: 10px 20px;
+font-size: 15px;
+font-weight: 700;
+cursor: pointer;
+flex-shrink: 0;
+transition: background 0.2s, transform 0.1s;
+letter-spacing: 0.2px;
+}
+.get-btn:hover  { background: var(–blue-hover); }
+.get-btn:active { transform: scale(0.95); }
+
+/* BOTTOM NAV */
+.bottom-nav {
+position: fixed;
+bottom: 16px;
+left: 50%;
+transform: translateX(-50%);
+background: rgba(22,27,34,0.95);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border: 1px solid var(–border);
+border-radius: 28px;
+display: flex;
+gap: 0;
+padding: 10px 6px;
+z-index: 200;
+box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.nav-item {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+padding: 6px 20px;
+border-radius: 20px;
+cursor: pointer;
+transition: background 0.2s;
+border: none;
+background: none;
+color: var(–sub);
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+}
+.nav-item.active {
+background: rgba(45,109,246,0.15);
+color: var(–blue);
+}
+.nav-item:hover:not(.active) { background: rgba(255,255,255,0.05); }
+
+.nav-icon { font-size: 20px; margin-bottom: 1px; }
+
+/* SEARCH */
+.search-bar {
+margin: 8px 12px 4px;
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 12px;
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 10px 14px;
+}
+.search-bar input {
+background: none;
+border: none;
+outline: none;
+color: var(–text);
+font-size: 15px;
+font-family: inherit;
+width: 100%;
+}
+.search-bar input::placeholder { color: var(–sub); }
+.search-icon { color: var(–sub); font-size: 16px; }
+
+/* TABS */
+.page { display: none; padding-top: 8px; }
+.page.active { display: block; }
+
+.links-list {
+padding: 0 12px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.link-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 16px;
+display: flex;
+align-items: center;
+gap: 12px;
+cursor: pointer;
+transition: background 0.2s;
+text-decoration: none;
+color: var(–text);
+animation: slideIn 0.4s ease both;
+}
+.link-card:hover { background: var(–card2); }
+
+.link-icon { font-size: 28px; flex-shrink: 0; }
+.link-name { font-size: 16px; font-weight: 600; }
+.link-desc { font-size: 12px; color: var(–sub); margin-top: 2px; }
+.link-arrow { margin-left: auto; color: var(–sub); font-size: 18px; }
+
+.certs-list {
+padding: 0 12px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.cert-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 16px;
+animation: slideIn 0.4s ease both;
+}
+.cert-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.cert-issuer { font-size: 12px; color: var(–sub); margin-bottom: 10px; }
+.cert-status {
+display: inline-block;
+padding: 4px 10px;
+border-radius: 8px;
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.5px;
+}
+.cert-active  { background: rgba(35,134,54,0.2);  color: #3fb950; }
+.cert-expired { background: rgba(218,54,51,0.2);  color: #f85149; }
+
+.empty-state {
+text-align: center;
+color: var(–sub);
+padding: 60px 20px;
+font-size: 14px;
+}
+.empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
+</style>
+
 </head>
 <body>
 
-<div id="disclaimer-overlay">
-    <div class="alert-box">
-        <h2>Developer Note</h2>
-        <p>Hey! Developer here. Just letting you know the script was not made by me. Only the website you’re accessing. Please look in the original github tab to view the original repository!</p>
-        <button class="alert-btn" onclick="closeDisclaimer()">I Understand</button>
-    </div>
+<!-- HEADER -->
+
+<div class="header">
+  <div class="header-icon">X</div>
+  <span class="header-title">xyzarco</span>
+  <span class="header-badge">BETA</span>
+  <div class="header-actions">
+    <button title="Dark mode">🌙</button>
+    <button title="Language">🇺🇸</button>
+  </div>
 </div>
 
-<div class="window">
-    <div class="sidebar">
-        <div class="dots"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div>
-        <div class="nav-link active" onclick="showPage('main-page', this)">Main</div>
-        <div class="nav-link" onclick="showPage('devices-page', this)">Supported Devices</div>
-        <div class="nav-link" onclick="showPage('chat-page', this)">Chat</div>
-        <div class="nav-link" onclick="showPage('socials-page', this)">Socials</div>
-        <div class="nav-link" onclick="showPage('original-gh', this)">Original GitHub</div>
-        <div class="nav-link" onclick="showPage('credits-page', this)">Credits</div>
+<!-- SEARCH -->
+
+<div class="search-bar">
+  <span class="search-icon">🔍</span>
+  <input type="text" placeholder="Search apps..." oninput="filterApps(this.value)">
+</div>
+
+<!-- TOOLBAR -->
+
+<div class="toolbar">
+  <button class="toolbar-btn active" onclick="sortApps('list')">☰ List</button>
+  <button class="toolbar-btn" onclick="sortApps('az')">↕ A–Z</button>
+  <button class="toolbar-btn" onclick="sortApps('recent')">🕐 Recent</button>
+</div>
+
+<!-- SIGNED PAGE -->
+
+<div class="page active" id="page-signed">
+
+  <div class="section-label">Ready to Install</div>
+
+  <div class="app-list" id="app-list">
+
+```
+<div class="app-card" data-name="Esign XL Axiata">
+  <div class="app-icon-wrap">
+    <div class="app-icon icon-esign">✍️</div>
+    <span class="status-badge badge-ready">READY</span>
+  </div>
+  <div class="app-info">
+    <div class="app-name">Esign — XL Axiata</div>
+    <div class="app-sub">XL AXIATA, PT TBK</div>
+  </div>
+  <button class="get-btn" onclick="getApp(event, 'Esign — XL Axiata')">GET</button>
+</div>
+
+<div class="app-card" data-name="Ksign XL Axiata">
+  <div class="app-icon-wrap">
+    <div class="app-icon icon-ksign">K</div>
+    <span class="status-badge badge-ready">READY</span>
+  </div>
+  <div class="app-info">
+    <div class="app-name">Ksign — XL Axiata</div>
+    <div class="app-sub">XL AXIATA, PT TBK</div>
+  </div>
+  <button class="get-btn" onclick="getApp(event, 'Ksign — XL Axiata')">GET</button>
+</div>
+
+<div class="app-card" data-name="TrollInstallerX XL Axiata">
+  <div class="app-icon-wrap">
+    <div class="app-icon icon-troll">🤡</div>
+    <span class="status-badge badge-ready">READY</span>
+  </div>
+  <div class="app-info">
+    <div class="app-name">TrollInstallerX — XL Axiata</div>
+    <div class="app-sub">XL AXIATA, PT TBK</div>
+  </div>
+  <button class="get-btn" onclick="getApp(event, 'TrollInstallerX — XL Axiata')">GET</button>
+</div>
+```
+
+  </div>
+
+  <div class="section-label" style="margin-top:18px;">Old Signed, May Not Work</div>
+
+  <div class="app-list" id="app-list-old">
+
+```
+<div class="app-card" data-name="Esign Varco">
+  <div class="app-icon-wrap">
+    <div class="app-icon icon-esign">✍️</div>
+    <span class="status-badge badge-revoked">REVOKED</span>
+  </div>
+  <div class="app-info">
+    <div class="app-name">Esign — Varco</div>
+    <div class="app-sub">National Oilwell Varco, Inc.</div>
+  </div>
+  <button class="get-btn" onclick="getApp(event, 'Esign — Varco')">GET</button>
+</div>
+
+<div class="app-card" data-name="TrollInstallerX Varco">
+  <div class="app-icon-wrap">
+    <div class="app-icon icon-troll">🤡</div>
+    <span class="status-badge badge-revoked">REVOKED</span>
+  </div>
+  <div class="app-info">
+    <div class="app-name">TrollInstallerX — Varco</div>
+    <div class="app-sub">National Oilwell Varco, Inc.</div>
+  </div>
+  <button class="get-btn" onclick="getApp(event, 'TrollInstallerX — Varco')">GET</button>
+</div>
+
+<div class="app-card" data-name="Ksign Varco">
+  <div class="app-icon-wrap">
+    <div class="app-icon icon-ksign">K</div>
+    <span class="status-badge badge-revoked">REVOKED</span>
+  </div>
+  <div class="app-info">
+    <div class="app-name">Ksign — Varco</div>
+    <div class="app-sub">National Oilwell Varco, Inc.</div>
+  </div>
+  <button class="get-btn" onclick="getApp(event, 'Ksign — Varco')">GET</button>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- LINKS PAGE -->
+
+<div class="page" id="page-links">
+  <div class="section-label">Useful Links</div>
+  <div class="links-list">
+    <a class="link-card" href="https://altstore.io" target="_blank">
+      <span class="link-icon">🔗</span>
+      <div>
+        <div class="link-name">AltStore</div>
+        <div class="link-desc">Sideload apps using your Apple ID</div>
+      </div>
+      <span class="link-arrow">›</span>
+    </a>
+    <a class="link-card" href="https://sideloadly.io" target="_blank">
+      <span class="link-icon">📲</span>
+      <div>
+        <div class="link-name">Sideloadly</div>
+        <div class="link-desc">Windows & Mac sideloading tool</div>
+      </div>
+      <span class="link-arrow">›</span>
+    </a>
+    <a class="link-card" href="https://github.com/opa334/TrollStore" target="_blank">
+      <span class="link-icon">🧌</span>
+      <div>
+        <div class="link-name">TrollStore</div>
+        <div class="link-desc">Permanent sideloading without revokes</div>
+      </div>
+      <span class="link-arrow">›</span>
+    </a>
+    <a class="link-card" href="https://esign.yyyue.xyz" target="_blank">
+      <span class="link-icon">✍️</span>
+      <div>
+        <div class="link-name">ESign</div>
+        <div class="link-desc">Sign and install IPAs on device</div>
+      </div>
+      <span class="link-arrow">›</span>
+    </a>
+  </div>
+</div>
+
+<!-- CERTS PAGE -->
+
+<div class="page" id="page-certs">
+  <div class="section-label">Certificates</div>
+  <div class="certs-list">
+    <div class="cert-card">
+      <div class="cert-name">XL Axiata, PT TBK</div>
+      <div class="cert-issuer">Apple Distribution Certificate</div>
+      <span class="cert-status cert-active">✓ ACTIVE</span>
     </div>
-
-    <div class="content">
-        <div id="main-page" class="page active">
-            <h1>RoclothesV2</h1>
-            <p class="subtitle">Official Dashboard</p>
-            <div class="code-container">
-                <code id="scriptText">loadstring(game:HttpGet("https://raw.githubusercontent.com/Rizzlerspaghetti/RoclothesV2/refs/heads/main/Script?token=GHSAT0AAAAAADZUHKY6KF7DDXBMMAGFKKHI2OR2D6A"))()</code>
-            </div>
-            <button class="action-btn" onclick="copyCode()">Copy Script</button>
-        </div>
-
-        <div id="devices-page" class="page">
-            <h1>Supported Devices</h1>
-            <p class="subtitle">Hardware Compatibility</p>
-            <div class="card">
-                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
-                    <span>🍎 iPhone (iOS)</span> <span class="ver-tag">16 - 26.4</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
-                    <span>📱 Samsung (Android)</span> <span class="ver-tag">8 - 16</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; padding:10px 0;">
-                    <span>🤖 Google Pixel / Etc.</span> <span class="ver-tag">Android 8 - 16</span>
-                </div>
-            </div>
-        </div>
-
-        <div id="original-gh" class="page">
-            <h1>Original Source</h1>
-            <p class="subtitle">External Repository</p>
-            <div class="card">
-                <p>View the original script logic on GitHub.</p>
-                <a href="https://github.com/blazejake224-code/Clemonlangsroclothesfixed" target="_blank" class="gh-btn">View on GitHub</a>
-            </div>
-        </div>
-
-        <div id="chat-page" class="page">
-            <h1>Network Chat</h1>
-            <p class="subtitle">Local Network Mode</p>
-            <div id="chat-display" style="flex:1; background:rgba(0,0,0,0.2); border-radius:8px; padding:12px; overflow-y:auto; margin-bottom:12px; border:1px solid var(--mac-border);"></div>
-            <div style="display:flex; gap:8px;">
-                <input type="text" id="chat-input" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--mac-border); border-radius:8px; padding:10px; color:white; outline:none;" placeholder="Type message..." onkeypress="if(event.key==='Enter')sendMessage()">
-                <button class="action-btn" onclick="sendMessage()">Send</button>
-            </div>
-        </div>
-
-        <div id="socials-page" class="page">
-            <h1>Socials</h1>
-            <p class="subtitle">YouTube Channel</p>
-            <a href="https://youtube.com/@professional_dealer?si=tov8__KMzeR_24nB" target="_blank" style="text-decoration:none;">
-                <div class="card" style="display:flex; align-items:center; gap:10px;">📺 YouTube: @professional_dealer</div>
-            </a>
-        </div>
-
-        <div id="credits-page" class="page">
-            <h1>Credits</h1>
-            <p class="subtitle">The Team</p>
-            <div class="card">
-                <p><strong>Forked by me!</strong></p>
-                <p style="font-size:13px; color:#aaa;">Credits to blazexfame for the code. I made the website. (Unfortunately live chat is broken and only works with people on your internet.)</p>
-            </div>
-        </div>
+    <div class="cert-card">
+      <div class="cert-name">National Oilwell Varco, Inc.</div>
+      <div class="cert-issuer">Apple Distribution Certificate</div>
+      <span class="cert-status cert-expired">✗ REVOKED</span>
     </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+
+<div class="bottom-nav">
+  <button class="nav-item active" onclick="switchTab('signed')">
+    <span class="nav-icon">🏠</span>
+    SIGNED
+  </button>
+  <button class="nav-item" onclick="switchTab('links')">
+    <span class="nav-icon">🔗</span>
+    LINKS
+  </button>
+  <button class="nav-item" onclick="switchTab('certs')">
+    <span class="nav-icon">🛡️</span>
+    CERTS
+  </button>
+  <button class="nav-item" onclick="switchTab('search')">
+    <span class="nav-icon">🔍</span>
+    SEARCH
+  </button>
 </div>
 
 <script>
-    function closeDisclaimer() {
-        document.getElementById('disclaimer-overlay').style.display = 'none';
+  function switchTab(tab) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const pageMap = { signed: 'page-signed', links: 'page-links', certs: 'page-certs', search: 'page-signed' };
+    document.getElementById(pageMap[tab] || 'page-signed').classList.add('active');
+    event.currentTarget.classList.add('active');
+    if (tab === 'search') {
+      document.querySelector('.search-bar input').focus();
     }
+  }
 
-    function showPage(pageId, element) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        element.classList.add('active');
-    }
+  function getApp(e, name) {
+    e.stopPropagation();
+    const btn = e.currentTarget;
+    btn.textContent = '...';
+    btn.style.background = '#238636';
+    setTimeout(() => {
+      btn.textContent = '✓';
+      setTimeout(() => {
+        btn.textContent = 'GET';
+        btn.style.background = '';
+      }, 1500);
+    }, 800);
+  }
 
-    function copyCode() {
-        navigator.clipboard.writeText(document.getElementById('scriptText').innerText).then(() => {
-            alert("Script Copied!");
-        });
-    }
+  function filterApps(query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('.app-card').forEach(card => {
+      const name = card.dataset.name.toLowerCase();
+      card.style.display = name.includes(q) ? '' : 'none';
+    });
+  }
 
-    const myID = "User_" + Math.floor(Math.random() * 9000 + 1000);
-    function sendMessage() {
-        const input = document.getElementById('chat-input');
-        const display = document.getElementById('chat-display');
-        if (input.value.trim()) {
-            const msgDiv = document.createElement('div');
-            msgDiv.style.marginBottom = "8px";
-            msgDiv.innerHTML = `<span style="color:#007aff; font-weight:600; font-size:13px;">${myID}:</span> <span style="font-size:13px; color:#eee;">${input.value}</span>`;
-            display.appendChild(msgDiv);
-            input.value = "";
-            display.scrollTop = display.scrollHeight;
-        }
-    }
+  function sortApps(mode) {
+    document.querySelectorAll('.toolbar-btn').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
 </script>
 
 </body>
