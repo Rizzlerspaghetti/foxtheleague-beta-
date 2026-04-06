@@ -1,632 +1,244 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>foxtheleague — Signed Apps</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0d1117;
-    --card: #161b22;
-    --card2: #1c2330;
-    --border: rgba(255,255,255,0.07);
-    --text: #e6edf3;
-    --sub: #8b949e;
-    --blue: #2d6df6;
-    --blue-hover: #4a82f8;
-    --ready: #238636;
-    --revoked: #da3633;
-    --radius: 18px;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xyzarco | macOS Hub</title>
+    <style>
+        /* CSS - The macOS Design System */
+        :root {
+            --glass: rgba(255, 255, 255, 0.4);
+            --border: rgba(255, 255, 255, 0.3);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
 
-- { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
 
-body {
-background: var(–bg);
-color: var(–text);
-font-family: ‘DM Sans’, -apple-system, sans-serif;
-min-height: 100vh;
-max-width: 480px;
-margin: 0 auto;
-padding-bottom: 100px;
-}
+        body {
+            background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            overflow: hidden;
+            color: #1d1d1f;
+        }
 
-/* HEADER */
-.header {
-display: flex;
-align-items: center;
-gap: 12px;
-padding: 18px 16px 14px;
-position: sticky;
-top: 0;
-background: rgba(13,17,23,0.92);
-backdrop-filter: blur(20px);
--webkit-backdrop-filter: blur(20px);
-z-index: 100;
-border-bottom: 1px solid var(–border);
-}
+        /* Top Menu Bar */
+        .menu-bar {
+            height: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 1000;
+        }
 
-.header-icon {
-width: 42px;
-height: 42px;
-background: #f5c542;
-border-radius: 10px;
-display: flex;
-align-items: center;
-justify-content: center;
-font-weight: 800;
-font-size: 20px;
-color: #000;
-flex-shrink: 0;
-}
+        .menu-left span { margin-right: 15px; cursor: default; }
+        .apple-logo { font-size: 16px; margin-right: 10px !important; }
 
-.header-title {
-font-size: 20px;
-font-weight: 700;
-letter-spacing: -0.3px;
-}
+        /* Desktop Area */
+        .desktop {
+            height: calc(100vh - 28px);
+            position: relative;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
 
-.header-badge {
-background: rgba(255,255,255,0.1);
-color: var(–sub);
-font-size: 10px;
-font-weight: 600;
-padding: 3px 7px;
-border-radius: 6px;
-letter-spacing: 0.5px;
-}
+        /* macOS Window Styling */
+        .window {
+            width: 90%;
+            max-width: 700px;
+            height: 450px;
+            background: var(--glass);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            animation: window-open 0.4s ease-out;
+        }
 
-.header-actions {
-margin-left: auto;
-display: flex;
-gap: 14px;
-align-items: center;
-}
+        @keyframes window-open {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
 
-.header-actions button {
-background: none;
-border: none;
-color: var(–sub);
-cursor: pointer;
-font-size: 18px;
-padding: 4px;
-transition: color 0.2s;
-}
-.header-actions button:hover { color: var(–text); }
+        .title-bar {
+            height: 45px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+        }
 
-/* TOOLBAR */
-.toolbar {
-display: flex;
-gap: 8px;
-padding: 10px 16px;
-align-items: center;
-}
+        .traffic-lights { display: flex; gap: 8px; width: 60px; }
+        .dot { height: 12px; width: 12px; border-radius: 50%; }
+        .close { background: #ff5f56; }
+        .min { background: #ffbd2e; }
+        .max { background: #27c93f; }
+        .title { flex-grow: 1; text-align: center; font-size: 14px; font-weight: 600; color: #333; margin-right: 60px; }
 
-.toolbar-btn {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 10px;
-color: var(–sub);
-padding: 7px 10px;
-cursor: pointer;
-font-size: 14px;
-transition: all 0.2s;
-display: flex;
-align-items: center;
-gap: 5px;
-}
-.toolbar-btn:hover { background: var(–card2); color: var(–text); }
-.toolbar-btn.active { color: var(–text); background: var(–card2); }
+        /* App List Styling */
+        .content { flex-grow: 1; overflow-y: auto; padding: 20px; }
+        
+        .app-row {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            transition: background 0.2s;
+        }
 
-/* SECTION LABEL */
-.section-label {
-display: flex;
-align-items: center;
-gap: 10px;
-padding: 6px 16px 10px;
-font-size: 11px;
-font-weight: 600;
-color: var(–sub);
-letter-spacing: 1.2px;
-text-transform: uppercase;
-}
-.section-label::before,
-.section-label::after {
-content: ‘’;
-flex: 1;
-height: 1px;
-background: var(–border);
-}
+        .app-row:hover { background: rgba(255, 255, 255, 0.5); }
 
-/* APP LIST */
-.app-list {
-display: flex;
-flex-direction: column;
-gap: 10px;
-padding: 0 12px;
-}
+        .app-icon { width: 45px; height: 45px; border-radius: 10px; background: #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-.app-card {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-display: flex;
-align-items: center;
-gap: 14px;
-padding: 14px;
-position: relative;
-transition: background 0.2s, transform 0.15s;
-cursor: pointer;
-animation: slideIn 0.4s ease both;
-}
-.app-card:hover { background: var(–card2); transform: scale(1.01); }
-.app-card:active { transform: scale(0.99); }
+        .app-details { margin-left: 15px; flex-grow: 1; }
+        .app-details h3 { font-size: 15px; margin-bottom: 2px; }
+        .app-details p { font-size: 11px; color: #555; }
 
-@keyframes slideIn {
-from { opacity: 0; transform: translateY(12px); }
-to   { opacity: 1; transform: translateY(0); }
-}
+        .btn-get {
+            background: #007aff;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: opacity 0.2s;
+        }
+        .btn-get:hover { opacity: 0.8; }
 
-.app-card:nth-child(1) { animation-delay: 0.05s; }
-.app-card:nth-child(2) { animation-delay: 0.10s; }
-.app-card:nth-child(3) { animation-delay: 0.15s; }
-.app-card:nth-child(4) { animation-delay: 0.20s; }
-.app-card:nth-child(5) { animation-delay: 0.25s; }
-.app-card:nth-child(6) { animation-delay: 0.30s; }
+        /* The Dock */
+        .dock-wrapper {
+            position: fixed;
+            bottom: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
 
-.app-icon-wrap {
-position: relative;
-flex-shrink: 0;
-}
+        .dock {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 10px;
+            border-radius: 22px;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+        }
 
-.app-icon {
-width: 62px;
-height: 62px;
-border-radius: 14px;
-object-fit: cover;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 28px;
-color: #fff;
-font-weight: 700;
-}
+        .dock-item {
+            width: 50px;
+            height: 50px;
+            transition: transform 0.2s ease;
+            cursor: pointer;
+        }
 
-/* colored icon backgrounds */
-.icon-esign  { background: linear-gradient(135deg, #4e9af1, #2563eb); }
-.icon-ksign  { background: linear-gradient(135deg, #60a5fa, #1d4ed8); }
-.icon-troll  { background: linear-gradient(135deg, #64748b, #334155); }
+        .dock-item:hover { transform: scale(1.3) translateY(-10px); }
+        .dock-item img { width: 100%; height: 100%; }
 
-.status-badge {
-position: absolute;
-top: -5px;
-left: -5px;
-font-size: 9px;
-font-weight: 700;
-padding: 3px 6px;
-border-radius: 6px;
-letter-spacing: 0.5px;
-text-transform: uppercase;
-}
-.badge-ready   { background: var(–ready);   color: #fff; }
-.badge-revoked { background: var(–revoked); color: #fff; }
-
-.app-info { flex: 1; min-width: 0; }
-
-.app-name {
-font-size: 16px;
-font-weight: 600;
-color: var(–text);
-margin-bottom: 3px;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
-
-.app-sub {
-font-size: 12px;
-color: var(–sub);
-font-weight: 500;
-letter-spacing: 0.2px;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
-
-.get-btn {
-background: var(–blue);
-color: #fff;
-border: none;
-border-radius: 20px;
-padding: 10px 20px;
-font-size: 15px;
-font-weight: 700;
-cursor: pointer;
-flex-shrink: 0;
-transition: background 0.2s, transform 0.1s;
-letter-spacing: 0.2px;
-}
-.get-btn:hover  { background: var(–blue-hover); }
-.get-btn:active { transform: scale(0.95); }
-
-/* BOTTOM NAV */
-.bottom-nav {
-position: fixed;
-bottom: 16px;
-left: 50%;
-transform: translateX(-50%);
-background: rgba(22,27,34,0.95);
-backdrop-filter: blur(20px);
--webkit-backdrop-filter: blur(20px);
-border: 1px solid var(–border);
-border-radius: 28px;
-display: flex;
-gap: 0;
-padding: 10px 6px;
-z-index: 200;
-box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-}
-
-.nav-item {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 4px;
-padding: 6px 20px;
-border-radius: 20px;
-cursor: pointer;
-transition: background 0.2s;
-border: none;
-background: none;
-color: var(–sub);
-font-size: 10px;
-font-weight: 600;
-letter-spacing: 0.5px;
-text-transform: uppercase;
-}
-.nav-item.active {
-background: rgba(45,109,246,0.15);
-color: var(–blue);
-}
-.nav-item:hover:not(.active) { background: rgba(255,255,255,0.05); }
-
-.nav-icon { font-size: 20px; margin-bottom: 1px; }
-
-/* SEARCH */
-.search-bar {
-margin: 8px 12px 4px;
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 12px;
-display: flex;
-align-items: center;
-gap: 8px;
-padding: 10px 14px;
-}
-.search-bar input {
-background: none;
-border: none;
-outline: none;
-color: var(–text);
-font-size: 15px;
-font-family: inherit;
-width: 100%;
-}
-.search-bar input::placeholder { color: var(–sub); }
-.search-icon { color: var(–sub); font-size: 16px; }
-
-/* TABS */
-.page { display: none; padding-top: 8px; }
-.page.active { display: block; }
-
-.links-list {
-padding: 0 12px;
-display: flex;
-flex-direction: column;
-gap: 10px;
-}
-
-.link-card {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-padding: 16px;
-display: flex;
-align-items: center;
-gap: 12px;
-cursor: pointer;
-transition: background 0.2s;
-text-decoration: none;
-color: var(–text);
-animation: slideIn 0.4s ease both;
-}
-.link-card:hover { background: var(–card2); }
-
-.link-icon { font-size: 28px; flex-shrink: 0; }
-.link-name { font-size: 16px; font-weight: 600; }
-.link-desc { font-size: 12px; color: var(–sub); margin-top: 2px; }
-.link-arrow { margin-left: auto; color: var(–sub); font-size: 18px; }
-
-.certs-list {
-padding: 0 12px;
-display: flex;
-flex-direction: column;
-gap: 10px;
-}
-
-.cert-card {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-padding: 16px;
-animation: slideIn 0.4s ease both;
-}
-.cert-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-.cert-issuer { font-size: 12px; color: var(–sub); margin-bottom: 10px; }
-.cert-status {
-display: inline-block;
-padding: 4px 10px;
-border-radius: 8px;
-font-size: 11px;
-font-weight: 700;
-letter-spacing: 0.5px;
-}
-.cert-active  { background: rgba(35,134,54,0.2);  color: #3fb950; }
-.cert-expired { background: rgba(218,54,51,0.2);  color: #f85149; }
-
-.empty-state {
-text-align: center;
-color: var(–sub);
-padding: 60px 20px;
-font-size: 14px;
-}
-.empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
-</style>
-
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .window { width: 95%; height: 80vh; }
+            .title { display: none; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- HEADER -->
-
-<div class="header">
-  <div class="header-icon">X</div>
-  <span class="header-title">xyzarco</span>
-  <span class="header-badge">BETA</span>
-  <div class="header-actions">
-    <button title="Dark mode">🌙</button>
-    <button title="Language">🇺🇸</button>
-  </div>
-</div>
-
-<!-- SEARCH -->
-
-<div class="search-bar">
-  <span class="search-icon">🔍</span>
-  <input type="text" placeholder="Search apps..." oninput="filterApps(this.value)">
-</div>
-
-<!-- TOOLBAR -->
-
-<div class="toolbar">
-  <button class="toolbar-btn active" onclick="sortApps('list')">☰ List</button>
-  <button class="toolbar-btn" onclick="sortApps('az')">↕ A–Z</button>
-  <button class="toolbar-btn" onclick="sortApps('recent')">🕐 Recent</button>
-</div>
-
-<!-- SIGNED PAGE -->
-
-<div class="page active" id="page-signed">
-
-  <div class="section-label">Ready to Install</div>
-
-  <div class="app-list" id="app-list">
-
-```
-<div class="app-card" data-name="Esign XL Axiata">
-  <div class="app-icon-wrap">
-    <div class="app-icon icon-esign">✍️</div>
-    <span class="status-badge badge-ready">READY</span>
-  </div>
-  <div class="app-info">
-    <div class="app-name">Esign — XL Axiata</div>
-    <div class="app-sub">XL AXIATA, PT TBK</div>
-  </div>
-  <button class="get-btn" onclick="getApp(event, 'Esign — XL Axiata')">GET</button>
-</div>
-
-<div class="app-card" data-name="Ksign XL Axiata">
-  <div class="app-icon-wrap">
-    <div class="app-icon icon-ksign">K</div>
-    <span class="status-badge badge-ready">READY</span>
-  </div>
-  <div class="app-info">
-    <div class="app-name">Ksign — XL Axiata</div>
-    <div class="app-sub">XL AXIATA, PT TBK</div>
-  </div>
-  <button class="get-btn" onclick="getApp(event, 'Ksign — XL Axiata')">GET</button>
-</div>
-
-<div class="app-card" data-name="TrollInstallerX XL Axiata">
-  <div class="app-icon-wrap">
-    <div class="app-icon icon-troll">🤡</div>
-    <span class="status-badge badge-ready">READY</span>
-  </div>
-  <div class="app-info">
-    <div class="app-name">TrollInstallerX — XL Axiata</div>
-    <div class="app-sub">XL AXIATA, PT TBK</div>
-  </div>
-  <button class="get-btn" onclick="getApp(event, 'TrollInstallerX — XL Axiata')">GET</button>
-</div>
-```
-
-  </div>
-
-  <div class="section-label" style="margin-top:18px;">Old Signed, May Not Work</div>
-
-  <div class="app-list" id="app-list-old">
-
-```
-<div class="app-card" data-name="Esign Varco">
-  <div class="app-icon-wrap">
-    <div class="app-icon icon-esign">✍️</div>
-    <span class="status-badge badge-revoked">REVOKED</span>
-  </div>
-  <div class="app-info">
-    <div class="app-name">Esign — Varco</div>
-    <div class="app-sub">National Oilwell Varco, Inc.</div>
-  </div>
-  <button class="get-btn" onclick="getApp(event, 'Esign — Varco')">GET</button>
-</div>
-
-<div class="app-card" data-name="TrollInstallerX Varco">
-  <div class="app-icon-wrap">
-    <div class="app-icon icon-troll">🤡</div>
-    <span class="status-badge badge-revoked">REVOKED</span>
-  </div>
-  <div class="app-info">
-    <div class="app-name">TrollInstallerX — Varco</div>
-    <div class="app-sub">National Oilwell Varco, Inc.</div>
-  </div>
-  <button class="get-btn" onclick="getApp(event, 'TrollInstallerX — Varco')">GET</button>
-</div>
-
-<div class="app-card" data-name="Ksign Varco">
-  <div class="app-icon-wrap">
-    <div class="app-icon icon-ksign">K</div>
-    <span class="status-badge badge-revoked">REVOKED</span>
-  </div>
-  <div class="app-info">
-    <div class="app-name">Ksign — Varco</div>
-    <div class="app-sub">National Oilwell Varco, Inc.</div>
-  </div>
-  <button class="get-btn" onclick="getApp(event, 'Ksign — Varco')">GET</button>
-</div>
-```
-
-  </div>
-</div>
-
-<!-- LINKS PAGE -->
-
-<div class="page" id="page-links">
-  <div class="section-label">Useful Links</div>
-  <div class="links-list">
-    <a class="link-card" href="https://altstore.io" target="_blank">
-      <span class="link-icon">🔗</span>
-      <div>
-        <div class="link-name">AltStore</div>
-        <div class="link-desc">Sideload apps using your Apple ID</div>
-      </div>
-      <span class="link-arrow">›</span>
-    </a>
-    <a class="link-card" href="https://sideloadly.io" target="_blank">
-      <span class="link-icon">📲</span>
-      <div>
-        <div class="link-name">Sideloadly</div>
-        <div class="link-desc">Windows & Mac sideloading tool</div>
-      </div>
-      <span class="link-arrow">›</span>
-    </a>
-    <a class="link-card" href="https://github.com/opa334/TrollStore" target="_blank">
-      <span class="link-icon">🧌</span>
-      <div>
-        <div class="link-name">TrollStore</div>
-        <div class="link-desc">Permanent sideloading without revokes</div>
-      </div>
-      <span class="link-arrow">›</span>
-    </a>
-    <a class="link-card" href="https://esign.yyyue.xyz" target="_blank">
-      <span class="link-icon">✍️</span>
-      <div>
-        <div class="link-name">ESign</div>
-        <div class="link-desc">Sign and install IPAs on device</div>
-      </div>
-      <span class="link-arrow">›</span>
-    </a>
-  </div>
-</div>
-
-<!-- CERTS PAGE -->
-
-<div class="page" id="page-certs">
-  <div class="section-label">Certificates</div>
-  <div class="certs-list">
-    <div class="cert-card">
-      <div class="cert-name">XL Axiata, PT TBK</div>
-      <div class="cert-issuer">Apple Distribution Certificate</div>
-      <span class="cert-status cert-active">✓ ACTIVE</span>
+    <div class="menu-bar">
+        <div class="menu-left">
+            <span class="apple-logo"></span>
+            <span style="font-weight: 700;">Finder</span>
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Go</span>
+        </div>
+        <div class="menu-right">
+            <span id="date-display">Mon Apr 6</span>
+            <span id="clock-display">9:41 AM</span>
+        </div>
     </div>
-    <div class="cert-card">
-      <div class="cert-name">National Oilwell Varco, Inc.</div>
-      <div class="cert-issuer">Apple Distribution Certificate</div>
-      <span class="cert-status cert-expired">✗ REVOKED</span>
+
+    <div class="desktop">
+        <div class="window" id="main-window">
+            <div class="title-bar">
+                <div class="traffic-lights">
+                    <div class="dot close"></div>
+                    <div class="dot min"></div>
+                    <div class="dot max"></div>
+                </div>
+                <div class="title">Applications - xyzarco</div>
+            </div>
+            <div class="content">
+                
+                <div class="app-row">
+                    <img src="https://raw.githubusercontent.com/xyzarco/app/main/icons/esign.png" class="app-icon" onerror="this.src='https://via.placeholder.com/45?text=ES'">
+                    <div class="app-details">
+                        <h3>E-Sign</h3>
+                        <p>Source: xyzarco/plist</p>
+                    </div>
+                    <a href="itms-services://?action=download-manifest&url=https://raw.githubusercontent.com/xyzarco/plist/main/Apps/E-Sign.plist" class="btn-get">GET</a>
+                </div>
+
+                <div class="app-row">
+                    <img src="https://via.placeholder.com/45?text=App" class="app-icon">
+                    <div class="app-details">
+                        <h3>Cert Info</h3>
+                        <p>Repo: esigncert</p>
+                    </div>
+                    <a href="https://github.com/xyzarco/esigncert" class="btn-get" style="background: #34c759;">CERT</a>
+                </div>
+
+                <p style="text-align: center; font-size: 11px; color: #666; margin-top: 20px;">
+                    All apps are signed with certificates from <b>esigncert</b> repo.
+                </p>
+
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- BOTTOM NAV -->
+    <div class="dock-wrapper">
+        <div class="dock">
+            <div class="dock-item" title="Finder"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Finder_Icon_macOS_Big_Sur.png"></div>
+            <div class="dock-item" title="Apps"><img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Apple_Store_logo.png"></div>
+            <div class="dock-item" title="Certificates"><img src="https://upload.wikimedia.org/wikipedia/commons/0/03/System_Preferences_Icon_macOS_Big_Sur.png"></div>
+            <div class="dock-item" onclick="window.location.href='https://github.com/xyzarco'" title="GitHub"><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"></div>
+        </div>
+    </div>
 
-<div class="bottom-nav">
-  <button class="nav-item active" onclick="switchTab('signed')">
-    <span class="nav-icon">🏠</span>
-    SIGNED
-  </button>
-  <button class="nav-item" onclick="switchTab('links')">
-    <span class="nav-icon">🔗</span>
-    LINKS
-  </button>
-  <button class="nav-item" onclick="switchTab('certs')">
-    <span class="nav-icon">🛡️</span>
-    CERTS
-  </button>
-  <button class="nav-item" onclick="switchTab('search')">
-    <span class="nav-icon">🔍</span>
-    SEARCH
-  </button>
-</div>
+    <script>
+        // JavaScript - System Functions
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+            
+            document.getElementById('clock-display').textContent = timeStr;
+            document.getElementById('date-display').textContent = dateStr;
+        }
 
-<script>
-  function switchTab(tab) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const pageMap = { signed: 'page-signed', links: 'page-links', certs: 'page-certs', search: 'page-signed' };
-    document.getElementById(pageMap[tab] || 'page-signed').classList.add('active');
-    event.currentTarget.classList.add('active');
-    if (tab === 'search') {
-      document.querySelector('.search-bar input').focus();
-    }
-  }
+        setInterval(updateClock, 1000);
+        updateClock();
 
-  function getApp(e, name) {
-    e.stopPropagation();
-    const btn = e.currentTarget;
-    btn.textContent = '...';
-    btn.style.background = '#238636';
-    setTimeout(() => {
-      btn.textContent = '✓';
-      setTimeout(() => {
-        btn.textContent = 'GET';
-        btn.style.background = '';
-      }, 1500);
-    }, 800);
-  }
-
-  function filterApps(query) {
-    const q = query.toLowerCase();
-    document.querySelectorAll('.app-card').forEach(card => {
-      const name = card.dataset.name.toLowerCase();
-      card.style.display = name.includes(q) ? '' : 'none';
-    });
-  }
-
-  function sortApps(mode) {
-    document.querySelectorAll('.toolbar-btn').forEach(b => b.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-  }
-</script>
-
+        // Simple Close Window simulation
+        document.querySelector('.close').addEventListener('click', () => {
+            document.getElementById('main-window').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
