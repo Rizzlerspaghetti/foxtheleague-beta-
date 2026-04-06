@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xyzarco | About Me</title>
+    <title>xyzarco | macOS Portfolio</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif; }
         
@@ -14,47 +14,31 @@
             overflow: hidden;
         }
 
-        /* DISCLAIMER OVERLAY */
+        /* DISCLAIMER */
         #disclaimer {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(50px);
-            -webkit-backdrop-filter: blur(50px);
+            backdrop-filter: blur(60px);
+            -webkit-backdrop-filter: blur(60px);
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
-            text-align: center;
             transition: opacity 0.5s ease;
         }
-
         .disclaimer-card {
             background: rgba(255, 255, 255, 0.1);
             padding: 40px;
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 400px;
+            text-align: center;
         }
-
-        .disclaimer-card h1 { font-size: 22px; margin-bottom: 20px; }
-
         .btn-group { display: flex; gap: 15px; justify-content: center; margin-top: 25px; }
-
-        .btn {
-            padding: 12px 25px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: transform 0.2s;
-        }
-
+        .btn { padding: 12px 25px; border-radius: 12px; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
         .btn-proceed { background: #007aff; color: white; }
         .btn-nah { background: rgba(255, 255, 255, 0.2); color: white; }
-        .btn:hover { transform: scale(1.05); }
 
         /* TOP BAR */
         .menu-bar {
@@ -65,20 +49,39 @@
         }
 
         /* DESKTOP CONTENT */
-        .desktop { height: 100vh; padding: 50px; display: flex; gap: 20px; }
+        .desktop { height: 100vh; padding: 60px; display: flex; gap: 25px; flex-wrap: wrap; }
         
         .window {
-            width: 350px; height: 300px;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(30px);
-            border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column;
+            overflow: hidden;
         }
 
         .title-bar { height: 35px; display: flex; align-items: center; padding: 0 12px; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .dots { display: flex; gap: 7px; }
         .dot { width: 12px; height: 12px; border-radius: 50%; }
         .close { background: #ff5f56; } .min { background: #ffbd2e; } .max { background: #27c93f; }
+
+        /* PROFILE SECTION */
+        .profile-header { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+        .user-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
+
+        /* SKILLS (SYSTEM SETTINGS STYLE) */
+        .skill-row { margin-bottom: 12px; }
+        .skill-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; font-weight: 600; }
+        .progress-bar { width: 100%; height: 8px; background: rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #007aff; border-radius: 4px; }
+
+        /* PROJECTS */
+        .project-link {
+            display: block; padding: 15px; background: white; border-radius: 10px;
+            text-decoration: none; color: #333; margin-top: 10px; border: 1px solid #eee;
+            transition: 0.2s;
+        }
+        .project-link:hover { background: #f5f5f7; transform: translateY(-2px); }
 
         /* DOCK */
         .dock-ctn { position: fixed; bottom: 15px; width: 100%; display: flex; justify-content: center; }
@@ -106,37 +109,77 @@
     </div>
 
     <div class="desktop">
-        <div class="window">
+        
+        <div class="window" style="width: 400px; height: auto;">
+            <div class="title-bar">
+                <div class="dots"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div>
+            </div>
+            <div style="padding: 25px;">
+                <div class="profile-header">
+                    <img src="image.png" class="user-img" alt="Me">
+                    <div>
+                        <h2>xyzarco</h2>
+                        <p style="font-size: 12px; color: #666;">Developer & Explorer</p>
+                    </div>
+                </div>
+                
+                <h3 style="font-size: 14px; margin-bottom: 10px;">Coding Languages</h3>
+                
+                <div class="skill-row">
+                    <div class="skill-label"><span>HTML/CSS</span><span>95%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 95%;"></div></div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-label"><span>JavaScript</span><span>80%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 80%;"></div></div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-label"><span>Python</span><span>65%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 65%;"></div></div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-label"><span>Swift</span><span>40%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="window" style="width: 350px; height: 320px;">
             <div class="title-bar">
                 <div class="dots"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div>
             </div>
             <div style="padding: 20px;">
-                <h2>Welcome.</h2>
-                <p style="margin-top: 10px; font-size: 14px; line-height: 1.4;">This is my macOS-style portfolio. Feel free to look around!</p>
+                <h3 style="margin-bottom: 15px;">Active Projects</h3>
+                
+                <a href="https://rizzlerspaghetti.github.io/RoclothesV2/" class="project-link" target="_blank">
+                    <strong>RoclothesV2</strong>
+                    <p style="font-size: 11px; color: #777;">Click to visit the project site</p>
+                </a>
+
+                <div class="project-link">
+                    <strong>macOS Portfolio</strong>
+                    <p style="font-size: 11px; color: #777;">The site you are currently on.</p>
+                </div>
             </div>
         </div>
+
     </div>
 
     <div class="dock-ctn">
         <div class="dock">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Finder_Icon_macOS_Big_Sur.png">
-            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Apple_Photos_icon.png">
+            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" onclick="window.location.href='https://github.com/xyzarco'">
         </div>
     </div>
 
     <script>
-        // Disclaimer Logic
         function enterSite() {
             const overlay = document.getElementById('disclaimer');
             overlay.style.opacity = '0';
             setTimeout(() => overlay.style.display = 'none', 500);
         }
-
-        function leaveSite() {
-            window.location.href = "https://www.google.com";
-        }
-
-        // Clock Logic
+        function leaveSite() { window.location.href = "https://www.google.com"; }
         setInterval(() => {
             document.getElementById('clock').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }, 1000);
