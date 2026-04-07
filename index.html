@@ -3,106 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>App Store</title>
+    <title>App Store - macOS Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        
-        .mac-window {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(50px) saturate(200%);
-            -webkit-backdrop-filter: blur(50px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.25), 0 30px 60px -30px rgba(0,0,0,0.3);
-        }
-
-        .sidebar {
-            background: rgba(235, 235, 235, 0.4);
-            backdrop-filter: blur(10px);
-        }
-
-        .app-card {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .app-card:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-        }
-
-        /* Custom scrollbar for that Mac look */
-        .mac-scroll::-webkit-scrollbar { width: 8px; }
-        .mac-scroll::-webkit-scrollbar-track { background: transparent; }
-        .mac-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+        .mac-blur { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(40px) saturate(210%); -webkit-backdrop-filter: blur(40px) saturate(210%); }
+        .sidebar { background: rgba(240, 240, 240, 0.5); border-right: 1px solid rgba(0,0,0,0.1); }
+        .app-card { background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(255,255,255,0.5); transition: all 0.2s ease; }
+        .app-card:hover { background: rgba(255, 255, 255, 0.7); transform: scale(1.02); }
+        .traffic-light { width: 12px; height: 12px; border-radius: 50%; border: 0.5px solid rgba(0,0,0,0.1); }
     </style>
 </head>
-<body class="bg-[#007AFF] bg-[url('https://help.apple.com/assets/650090F16688B774E90B050B/650090F74E07B7F7D208AF0F/en_US/e188998877d54400a402377823f6631e.png')] bg-cover bg-center h-screen w-screen overflow-hidden flex items-center justify-center p-0 md:p-12">
+<body class="bg-[#007AFF] bg-[url('https://help.apple.com/assets/650090F16688B774E90B050B/650090F74E07B7F7D208AF0F/en_US/e188998877d54400a402377823f6631e.png')] bg-cover bg-center h-screen flex items-center justify-center p-0 md:p-10 overflow-hidden">
 
     <div x-data="{ 
-        tab: 'Discover',
         search: '',
+        tab: 'all',
         apps: [],
-        install(plistUrl) {
-            if (!plistUrl || plistUrl === '#') return alert('No manifest found for this app.');
-            window.location.href = `itms-services://?action=download-manifest&url=${plistUrl}`;
-        },
+        loading: true,
         async init() {
             try {
-                const res = await fetch('apps.json'); 
-                this.apps = await res.json();
+                // Fetching the ACTUAL logic/data from xyzarco's source
+                const res = await fetch('https://xyzarco.github.io/app/static/json/apps.json');
+                const data = await res.json();
+                this.apps = data;
+                this.loading = false;
             } catch (e) {
-                // Fallback Data for preview
-                this.apps = [
-                    { name: 'ESign', version: '5.0.2', status: 'Ready', icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/05/73/0e/05730e7d-f49c-e7a9-25f1-33292416f404/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/512x512bb.jpg', plist: 'https://xyzarco.github.io/app/plists/esign.plist' },
-                    { name: 'Scarlet', version: '1.0', status: 'Revoked', icon: 'https://usescarlet.com/icon.png', plist: '#' }
-                ];
+                console.error('Error fetching data');
             }
+        },
+        install(url) {
+            // Native iOS Installer Logic
+            window.location.href = `itms-services://?action=download-manifest&url=${url}`;
         }
-    }" class="mac-window w-full h-full md:rounded-2xl overflow-hidden flex flex-col md:flex-row">
+    }" class="mac-blur w-full h-full md:w-[1000px] md:h-[700px] md:rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden border border-white/30">
 
-        <aside class="sidebar w-full md:w-60 flex flex-col border-b md:border-r border-black/5">
-            <div class="hidden md:flex gap-2 p-5">
-                <div class="w-3 h-3 rounded-full bg-[#FF5F57]"></div>
-                <div class="w-3 h-3 rounded-full bg-[#FEBC2E]"></div>
-                <div class="w-3 h-3 rounded-full bg-[#28C840]"></div>
+        <aside class="sidebar w-full md:w-64 flex flex-col p-4 md:pt-6">
+            <div class="hidden md:flex gap-2 mb-8 ml-2">
+                <div class="traffic-light bg-[#FF5F57]"></div>
+                <div class="traffic-light bg-[#FEBC2E]"></div>
+                <div class="traffic-light bg-[#28C840]"></div>
             </div>
 
-            <nav class="flex md:flex-col p-3 gap-1 overflow-x-auto no-scrollbar">
-                <template x-for="item in ['Discover', 'Ready', 'Revoked']">
-                    <button @click="tab = item" 
-                            :class="tab === item ? 'bg-white/60 shadow-sm' : 'hover:bg-white/30'"
-                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all text-gray-800 flex-1 md:flex-none">
-                        <span x-text="item"></span>
-                    </button>
-                </template>
+            <nav class="flex md:flex-col gap-1 overflow-x-auto no-scrollbar">
+                <button @click="tab = 'all'" :class="tab === 'all' ? 'bg-blue-500 text-white' : 'hover:bg-black/5'" class="px-3 py-1.5 rounded-lg text-sm font-medium transition text-left flex-1 md:flex-none">All Apps</button>
+                <button @click="tab = 'Ready'" :class="tab === 'Ready' ? 'bg-blue-500 text-white' : 'hover:bg-black/5'" class="px-3 py-1.5 rounded-lg text-sm font-medium transition text-left flex-1 md:flex-none">Signed</button>
             </nav>
         </aside>
 
-        <main class="flex-1 flex flex-col min-w-0 bg-white/20">
-            <div class="p-6 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <h1 class="text-3xl font-bold text-gray-900 tracking-tight" x-text="tab"></h1>
-                <input x-model="search" type="text" placeholder="Search" class="bg-black/5 border border-black/5 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-48">
-            </div>
+        <main class="flex-1 flex flex-col h-full overflow-hidden">
+            <header class="p-6 md:p-8 flex items-center justify-between">
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">App Store</h1>
+                <input x-model="search" type="text" placeholder="Search" class="bg-black/10 border-none rounded-md px-3 py-1 text-sm focus:ring-2 focus:ring-blue-400 w-32 md:w-48">
+            </header>
 
-            <div class="flex-1 overflow-y-auto px-6 md:px-10 pb-10 mac-scroll">
-                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
-                    <template x-for="app in apps.filter(a => (tab === 'Discover' || a.status === tab) && a.name.toLowerCase().includes(search.toLowerCase()))">
-                        <div class="app-card flex items-center p-4 rounded-xl border border-white/40 shadow-sm">
-                            <img :src="app.icon" class="w-16 h-16 rounded-[1.2rem] shadow-md object-cover" @error="$el.src='https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/0a/63/0e/0a630e7d-f49c-e7a9-25f1-33292416f404/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/512x512bb.jpg'">
+            <div class="flex-1 overflow-y-auto px-6 md:px-8 pb-10">
+                <div x-show="loading" class="flex justify-center py-20 text-gray-500">Loading data from source...</div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <template x-for="app in apps.filter(a => (tab === 'all' || a.status === tab) && a.name.toLowerCase().includes(search.toLowerCase()))">
+                        <div class="app-card p-4 rounded-2xl flex flex-col items-center text-center">
+                            <img :src="app.icon" class="w-20 h-20 rounded-[1.4rem] shadow-lg mb-3 border border-black/5 object-cover">
+                            <h3 class="font-bold text-sm text-gray-900 truncate w-full" x-text="app.name"></h3>
+                            <p class="text-[10px] text-gray-500 mb-4" x-text="app.version || 'Latest'"></p>
                             
-                            <div class="ml-4 flex-1 min-w-0">
-                                <h3 class="font-bold text-[15px] text-gray-900 truncate" x-text="app.name"></h3>
-                                <p class="text-[11px] text-gray-500 font-medium" x-text="app.version"></p>
-                                
-                                <div class="mt-2 flex items-center justify-between">
-                                    <span :class="app.status === 'Ready' ? 'text-green-600' : 'text-red-500'" class="text-[10px] font-bold uppercase tracking-tighter" x-text="app.status"></span>
-                                    <button @click="install(app.plist)" class="bg-[#007AFF] hover:bg-[#0062CC] text-white px-5 py-1 rounded-full text-xs font-bold transition-transform active:scale-95">
-                                        GET
-                                    </button>
-                                </div>
-                            </div>
+                            <button @click="install(app.link)" class="bg-[#f0f0f7] hover:bg-[#007AFF] hover:text-white text-blue-600 w-20 py-1 rounded-full text-xs font-black transition-all">
+                                GET
+                            </button>
                         </div>
                     </template>
                 </div>
