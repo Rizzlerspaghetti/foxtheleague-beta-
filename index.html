@@ -3,79 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>App Store - macOS Edition</title>
+    <title>Varco - App Store</title>
+    
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/vant@3/lib/index.css" />
+    <script src="https://fastly.jsdelivr.net/npm/vue@3"></script>
+    <script src="https://fastly.jsdelivr.net/npm/vant@3/lib/vant.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
-        .mac-blur { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(40px) saturate(210%); -webkit-backdrop-filter: blur(40px) saturate(210%); }
-        .sidebar { background: rgba(240, 240, 240, 0.5); border-right: 1px solid rgba(0,0,0,0.1); }
-        .app-card { background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(255,255,255,0.5); transition: all 0.2s ease; }
-        .app-card:hover { background: rgba(255, 255, 255, 0.7); transform: scale(1.02); }
-        .traffic-light { width: 12px; height: 12px; border-radius: 50%; border: 0.5px solid rgba(0,0,0,0.1); }
+        :root { --van-primary-color: #007aff; }
+        body { background-color: #f7f8fa; -webkit-font-smoothing: antialiased; }
+        
+        /* Exact Navbar styling */
+        .van-nav-bar { background: #007aff !important; }
+        .van-nav-bar__title { color: #fff !important; font-weight: 600; }
+        
+        /* App Card styling to match original */
+        .app-item {
+            background: #fff;
+            margin: 12px;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .app-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
+            object-fit: cover;
+            margin-right: 14px;
+            border: 0.5px solid rgba(0,0,0,0.1);
+        }
+        .install-button {
+            background: #f0f0f7;
+            color: #007aff;
+            border: none;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 13px;
+        }
+        .status-tag {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .tag-ready { background: #e8f9f0; color: #07c160; }
+        .tag-revoked { background: #fff1f0; color: #f5222d; }
     </style>
 </head>
-<body class="bg-[#007AFF] bg-[url('https://help.apple.com/assets/650090F16688B774E90B050B/650090F74E07B7F7D208AF0F/en_US/e188998877d54400a402377823f6631e.png')] bg-cover bg-center h-screen flex items-center justify-center p-0 md:p-10 overflow-hidden">
+<body>
 
-    <div x-data="{ 
-        search: '',
-        tab: 'all',
-        apps: [],
-        loading: true,
-        async init() {
-            try {
-                // Fetching the ACTUAL logic/data from xyzarco's source
-                const res = await fetch('https://xyzarco.github.io/app/static/json/apps.json');
-                const data = await res.json();
-                this.apps = data;
-                this.loading = false;
-            } catch (e) {
-                console.error('Error fetching data');
-            }
-        },
-        install(url) {
-            // Native iOS Installer Logic
-            window.location.href = `itms-services://?action=download-manifest&url=${url}`;
-        }
-    }" class="mac-blur w-full h-full md:w-[1000px] md:h-[700px] md:rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden border border-white/30">
+<div id="app">
+    <van-nav-bar :title="lang === 'en' ? 'Varco App Store' : 'Toko Aplikasi Varco'" fixed placeholder></van-nav-bar>
 
-        <aside class="sidebar w-full md:w-64 flex flex-col p-4 md:pt-6">
-            <div class="hidden md:flex gap-2 mb-8 ml-2">
-                <div class="traffic-light bg-[#FF5F57]"></div>
-                <div class="traffic-light bg-[#FEBC2E]"></div>
-                <div class="traffic-light bg-[#28C840]"></div>
-            </div>
+    <van-tabs v-model:active="lang" @click-tab="toggleLang" sticky offset-top="46">
+        <van-tab title="English" name="en"></van-tab>
+        <van-tab title="Indonesian" name="id"></van-tab>
+    </van-tabs>
 
-            <nav class="flex md:flex-col gap-1 overflow-x-auto no-scrollbar">
-                <button @click="tab = 'all'" :class="tab === 'all' ? 'bg-blue-500 text-white' : 'hover:bg-black/5'" class="px-3 py-1.5 rounded-lg text-sm font-medium transition text-left flex-1 md:flex-none">All Apps</button>
-                <button @click="tab = 'Ready'" :class="tab === 'Ready' ? 'bg-blue-500 text-white' : 'hover:bg-black/5'" class="px-3 py-1.5 rounded-lg text-sm font-medium transition text-left flex-1 md:flex-none">Signed</button>
-            </nav>
-        </aside>
+    <van-search v-model="search" :placeholder="lang === 'en' ? 'Search apps...' : 'Cari aplikasi...'" aria-label="Search"></van-search>
 
-        <main class="flex-1 flex flex-col h-full overflow-hidden">
-            <header class="p-6 md:p-8 flex items-center justify-between">
-                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">App Store</h1>
-                <input x-model="search" type="text" placeholder="Search" class="bg-black/10 border-none rounded-md px-3 py-1 text-sm focus:ring-2 focus:ring-blue-400 w-32 md:w-48">
-            </header>
-
-            <div class="flex-1 overflow-y-auto px-6 md:px-8 pb-10">
-                <div x-show="loading" class="flex justify-center py-20 text-gray-500">Loading data from source...</div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <template x-for="app in apps.filter(a => (tab === 'all' || a.status === tab) && a.name.toLowerCase().includes(search.toLowerCase()))">
-                        <div class="app-card p-4 rounded-2xl flex flex-col items-center text-center">
-                            <img :src="app.icon" class="w-20 h-20 rounded-[1.4rem] shadow-lg mb-3 border border-black/5 object-cover">
-                            <h3 class="font-bold text-sm text-gray-900 truncate w-full" x-text="app.name"></h3>
-                            <p class="text-[10px] text-gray-500 mb-4" x-text="app.version || 'Latest'"></p>
-                            
-                            <button @click="install(app.link)" class="bg-[#f0f0f7] hover:bg-[#007AFF] hover:text-white text-blue-600 w-20 py-1 rounded-full text-xs font-black transition-all">
-                                GET
-                            </button>
+    <van-pull-refresh v-model="loading" @refresh="onRefresh">
+        <div class="pb-20">
+            <template v-for="app in filteredApps" :key="app.name">
+                <div class="app-item">
+                    <img :src="app.icon" class="app-icon" @error="handleImgError">
+                    
+                    <div class="flex-1 overflow-hidden">
+                        <div class="text-[16px] font-bold text-gray-800 truncate">{{ app.name }}</div>
+                        <div class="text-[12px] text-gray-400">v{{ app.version || '1.0' }}</div>
+                        <div class="mt-1">
+                            <span :class="app.status === 'Ready' ? 'tag-ready' : 'tag-revoked'" class="status-tag">
+                                {{ app.status }}
+                            </span>
                         </div>
-                    </template>
+                    </div>
+
+                    <button class="install-button active:opacity-50" @click="doInstall(app.link)">
+                        {{ lang === 'en' ? 'GET' : 'DAPAT' }}
+                    </button>
                 </div>
-            </div>
-        </main>
-    </div>
+            </template>
+
+            <van-empty v-if="filteredApps.length === 0" description="No Apps Found" />
+        </div>
+    </van-pull-refresh>
+
+    <van-tabbar v-model="activeNav" active-color="#007aff">
+        <van-tabbar-item icon="apps-o">{{ lang === 'en' ? 'Apps' : 'Aplikasi' }}</van-tabbar-item>
+        <van-tabbar-item icon="info-o">{{ lang === 'en' ? 'About' : 'Tentang' }}</van-tabbar-item>
+    </van-tabbar>
+</div>
+
+<script>
+const { createApp, ref, computed, onMounted } = Vue;
+
+createApp({
+    setup() {
+        const lang = ref('en');
+        const search = ref('');
+        const activeNav = ref(0);
+        const loading = ref(false);
+        const appData = ref([]);
+
+        // The core logic to fetch the EXACT data source
+        const fetchData = async () => {
+            try {
+                // Fetching from the original source repo
+                const response = await fetch('https://xyzarco.github.io/app/static/json/apps.json');
+                appData.value = await response.json();
+            } catch (err) {
+                vant.Notify({ type: 'danger', message: 'Failed to sync with Varco database' });
+            }
+        };
+
+        const filteredApps = computed(() => {
+            return appData.value.filter(a => 
+                a.name.toLowerCase().includes(search.value.toLowerCase())
+            );
+        });
+
+        const doInstall = (link) => {
+            if (!link || link === '#') {
+                vant.Dialog.alert({
+                    title: 'Notice',
+                    message: 'This application is currently under maintenance or revoked.',
+                });
+                return;
+            }
+            // The exact ITMS services trigger for iOS
+            window.location.href = `itms-services://?action=download-manifest&url=${link}`;
+        };
+
+        const onRefresh = async () => {
+            await fetchData();
+            loading.value = false;
+            vant.Toast.success('Updated');
+        };
+
+        const toggleLang = (params) => {
+            lang.value = params.name;
+        };
+
+        const handleImgError = (e) => {
+            e.target.src = 'https://xyzarco.github.io/app/static/img/logo.png';
+        };
+
+        onMounted(fetchData);
+
+        return {
+            lang, search, activeNav, loading, filteredApps,
+            doInstall, onRefresh, toggleLang, handleImgError
+        };
+    }
+}).use(vant).mount('#app');
+</script>
 
 </body>
 </html>
