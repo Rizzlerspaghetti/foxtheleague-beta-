@@ -3,63 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Store - macOS Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        .mac-blur { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); }
-        .window-shadow { box-shadow: 0 30px 60px rgba(0,0,0,0.3); }
+        :root { --mac-bg: rgba(255, 255, 255, 0.75); }
+        .glass { background: var(--mac-bg); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); }
+        .sidebar-blur { background: rgba(245, 245, 245, 0.5); backdrop-filter: blur(30px); }
+        .app-card:active { transform: scale(0.98); }
+        /* Hide scrollbar but keep functionality */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-[url('https://coolbackgrounds.io/images/backgrounds/white/pure-white-background-85a2a7fd.jpg')] bg-cover h-screen flex items-center justify-center font-sans">
+<body class="bg-[#1a1a1a] bg-[url('https://www.apple.com/v/macos/sonoma/a/images/overview/hero/hero_wallpaper__e9ofv88bc66q_large.jpg')] bg-cover bg-center h-screen w-screen overflow-hidden flex items-center justify-center p-0 md:p-10">
 
     <div x-data="{ 
-        filter: 'all', 
-        apps: [
-            { name: 'Esign', status: 'Ready', provider: 'XL Axiata', link: 'itms-services://?action=download-manifest&url=...' },
-            { name: 'TrollInstallerX', status: 'Revoked', provider: 'Varco', link: '#' },
-            { name: 'Ksign', status: 'Ready', provider: 'China Telecom', link: 'itms-services://...' }
-        ]
-    }" class="w-[900px] h-[600px] mac-blur rounded-xl border border-white/40 window-shadow flex overflow-hidden">
+        search: '',
+        filter: 'All',
+        apps: [],
+        async init() {
+            // Logic: Replace this URL with your actual apps.json link
+            try {
+                const response = await fetch('https://xyzarco.github.io/app/apps.json');
+                const data = await response.json();
+                this.apps = data;
+            } catch (e) {
+                console.error('Failed to load apps, using fallback data.');
+                this.apps = [
+                    { name: 'ESign', version: '5.0.2', status: 'Ready', icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/05/73/0e/05730e7d-f49c-e7a9-25f1-33292416f404/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/512x512bb.jpg', link: 'itms-services://?action=download-manifest&url=YOUR_PLIST_URL' },
+                    { name: 'Scarlet', version: '1.0', status: 'Revoked', icon: 'https://use scarlet.com/icon.png', link: '#' }
+                ];
+            }
+        }
+    }" class="w-full h-full md:max-w-6xl md:h-[80%] glass md:rounded-2xl border border-white/30 shadow-2xl flex flex-col md:flex-row overflow-hidden">
         
-        <aside class="w-56 bg-white/30 border-r border-black/10 p-4 flex flex-col">
-            <div class="flex gap-2 mb-8">
-                <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+        <aside class="w-full md:w-64 sidebar-blur border-b md:border-b-0 md:border-r border-black/10 flex flex-col z-10">
+            <div class="hidden md:flex p-4 gap-2">
+                <div class="w-3.5 h-3.5 rounded-full bg-[#ff5f57] border border-black/10"></div>
+                <div class="w-3.5 h-3.5 rounded-full bg-[#febc2e] border border-black/10"></div>
+                <div class="w-3.5 h-3.5 rounded-full bg-[#28c840] border border-black/10"></div>
             </div>
-            
-            <nav class="space-y-1">
-                <button @click="filter = 'all'" :class="filter === 'all' ? 'bg-blue-500 text-white' : 'hover:bg-black/5'" class="w-full text-left px-3 py-1.5 rounded-md text-sm font-medium transition">All Apps</button>
-                <button @click="filter = 'Ready'" :class="filter === 'Ready' ? 'bg-blue-500 text-white' : 'hover:bg-black/5'" class="w-full text-left px-3 py-1.5 rounded-md text-sm font-medium transition">Signed</button>
-                <button @click="filter = 'Revoked'" :class="filter === 'Revoked' ? 'bg-blue-500 text-white' : 'hover:bg-black/5'" class="w-full text-left px-3 py-1.5 rounded-md text-sm font-medium transition">Revoked</button>
+
+            <nav class="flex md:flex-col p-2 md:p-4 overflow-x-auto md:overflow-x-hidden gap-1 no-scrollbar">
+                <template x-for="item in ['All', 'Ready', 'Revoked']">
+                    <button @click="filter = item" 
+                            :class="filter === item ? 'bg-black/10 md:bg-blue-500 md:text-white' : 'text-gray-700 hover:bg-black/5'"
+                            class="flex-1 md:flex-none text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200" 
+                            x-text="item"></button>
+                </template>
             </nav>
         </aside>
 
-        <main class="flex-1 p-8 overflow-y-auto">
-            <header class="mb-8">
-                <h1 class="text-3xl font-bold text-black/80">App Store</h1>
-                <p class="text-sm text-black/50">Manage your signed IPA installations</p>
-            </header>
+        <main class="flex-1 flex flex-col min-w-0 h-full">
+            <div class="p-6 pb-2">
+                <div class="relative max-w-md">
+                    <input x-model="search" type="text" placeholder="Search apps..." class="w-full bg-black/5 border border-black/10 rounded-lg px-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+                </div>
+            </div>
 
-            <div class="grid grid-cols-1 gap-4">
-                <template x-for="app in apps">
-                    <div x-show="filter === 'all' || filter === app.status" class="bg-white/50 border border-white/60 p-4 rounded-lg flex items-center justify-between hover:bg-white/80 transition shadow-sm">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-xl shadow-inner flex items-center justify-center text-white font-bold text-xl" x-text="app.name[0]"></div>
-                            <div>
-                                <h3 class="font-bold text-gray-800" x-text="app.name"></h3>
-                                <p class="text-xs text-gray-500" x-text="app.provider"></p>
+            <div class="flex-1 overflow-y-auto p-6 no-scrollbar">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <template x-for="app in apps.filter(a => (filter === 'All' || a.status === filter) && a.name.toLowerCase().includes(search.toLowerCase()))">
+                        <div class="app-card bg-white/40 border border-white/50 p-4 rounded-2xl flex items-center gap-4 transition-all hover:bg-white/60 shadow-sm">
+                            <img :src="app.icon" class="w-16 h-16 rounded-[1.2rem] shadow-md border border-black/5" @error="$el.src='https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/0a/63/0e/0a630e7d-f49c-e7a9-25f1-33292416f404/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/512x512bb.jpg'">
+                            
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-gray-900 truncate text-[15px]" x-text="app.name"></h3>
+                                <p class="text-[11px] text-gray-500 font-medium uppercase tracking-wider" x-text="app.version"></p>
+                                
+                                <div class="mt-2 flex items-center justify-between">
+                                    <span :class="app.status === 'Ready' ? 'text-green-600' : 'text-red-500'" class="text-[10px] font-bold" x-text="app.status"></span>
+                                    <a :href="app.link" class="bg-[#f1f1f7] hover:bg-[#e2e2e9] text-blue-600 px-5 py-1 rounded-full text-xs font-black transition-colors">
+                                        GET
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="flex items-center gap-4">
-                            <span :class="app.status === 'Ready' ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded" x-text="app.status"></span>
-                            <a :href="app.link" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-sm transition">GET</a>
-                        </div>
-                    </div>
-                </template>
+                    </template>
+                </div>
             </div>
         </main>
     </div>
+
 </body>
 </html>
